@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stagely — le bon stack pour votre stade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0F6E56; --teal-deep:#0B5443; --coral:#D85A30;
+    --ivory:#F7F5F1; --ink:#2C2C2A; --gray:#5F5E5A;
+    --teal-tint:#E7EFEB; --coral-tint:#F7E7E0; --line:#DCD6C9;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--ivory); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;}
+
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:22px 48px; border-bottom:1px solid var(--line);}
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+  .logo-mark{display:flex; align-items:flex-end; gap:3px; height:22px;}
+  .logo-mark span{width:6px; display:block; border-radius:1px; background:var(--teal);}
+  .logo-mark span:nth-child(1){height:9px;}
+  .logo-mark span:nth-child(2){height:15px;}
+  .logo-mark span:nth-child(3){height:22px; background:var(--coral);}
+  .wordmark{font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--ink);}
+  nav{display:flex; align-items:center; gap:30px;}
+  nav a{color:var(--gray); text-decoration:none; font-size:14px; font-weight:500; padding-bottom:4px; border-bottom:2px solid transparent;}
+  nav a.active{color:var(--ink); border-bottom-color:var(--coral);}
+  nav .btn-nav{background:var(--teal); color:var(--ivory); padding:9px 18px; border-radius:6px; font-weight:600;}
+
+  .hero{text-align:center; padding:80px 32px 64px;}
+  .badge{display:inline-block; background:var(--teal-tint); color:var(--teal-deep); font-size:12px; font-weight:600; padding:6px 16px; border-radius:20px; margin-bottom:22px;}
+  .hero h1{font-size:44px; font-weight:600; line-height:1.2; max-width:600px; margin:0 auto 18px;}
+  .hero p{color:var(--gray); font-size:16px; line-height:1.6; max-width:480px; margin:0 auto 34px;}
+  .hero-ctas{display:flex; gap:12px; justify-content:center;}
+  .btn{border:none; font-family:'Inter'; font-size:15px; font-weight:600; padding:13px 26px; border-radius:6px; cursor:pointer; text-decoration:none; display:inline-block;}
+  .btn-primary{background:var(--coral); color:var(--coral-tint);}
+  .btn-secondary{background:transparent; color:var(--ink); border:1px solid var(--line);}
+
+  .features{background:#fff; padding:56px 32px; border-top:1px solid var(--line);}
+  .features-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; max-width:800px; margin:0 auto;}
+  .feature-icon{width:38px; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; font-family:'Fraunces'; font-weight:600; font-size:16px;}
+  .feature h3{font-size:16px; font-weight:600; margin:0 0 8px; font-family:'Inter';}
+  .feature p{font-size:13.5px; color:var(--gray); line-height:1.55; margin:0;}
+
+  footer{padding:32px 48px; text-align:center; color:var(--gray); font-size:13px;}
+
+  @media (max-width:720px){
+    .topbar{padding:18px 22px;} nav a:not(.btn-nav){display:none;}
+    .hero{padding:56px 22px;} .hero h1{font-size:32px;}
+    .features{padding:40px 22px;} .features-grid{grid-template-columns:1fr; max-width:360px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <div class="logo-mark"><span></span><span></span><span></span></div>
+      <div class="wordmark">stagely</div>
+    </a>
+    <nav>
+      <a href="index.html" class="active">Accueil</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="catalogue.html">Catalogue</a>
+      <a href="#" class="btn-nav">Get started</a>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <div class="badge">Pensé pour les fondateurs sans équipe revops</div>
+    <h1>Le bon stack pour votre équipe et votre stade</h1>
+    <p>Décrivez votre entreprise. On diagnostique ce dont vous avez vraiment besoin, on vous recommande les bons outils, et on vérifie que vous ne payez pas trop cher.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="diagnostic.html">Diagnostiquer mon stack</a>
+      <a class="btn btn-secondary" href="catalogue.html">Voir le catalogue</a>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="background:var(--teal-tint); color:var(--teal-deep);">1</div>
+        <h3>Diagnostic</h3>
+        <p>Décrivez votre activité. On identifie ce dont vous avez réellement besoin à votre stade.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="background:var(--coral-tint); color:#993C1D;">2</div>
+        <h3>Benchmark</h3>
+        <p>On vérifie si vous payez trop cher, par rapport à des prix réellement négociés.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="background:var(--teal-tint); color:var(--teal-deep);">3</div>
+        <h3>Compatibilité</h3>
+        <p>On s'assure que tout nouvel outil s'intègre bien avec ce que vous utilisez déjà.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2026 Stagely — v1, à affiner après retours utilisateurs</footer>
+
+</body>
+</html>

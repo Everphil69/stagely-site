@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stagely — Catalogue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0F6E56;
+    --teal-deep: #0B5443;
+    --coral: #D85A30;
+    --ivory: #F7F5F1;
+    --ink: #2C2C2A;
+    --muted: #5F5E5A;
+    --line: #E4E0D8;
+    --card-bg: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 48px; border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .logo-mark{ display:flex; align-items:flex-end; gap:3px; height:22px; }
+  .logo-mark span{ width:6px; display:block; border-radius:1px; background:var(--teal); }
+  .logo-mark span:nth-child(1){ height:9px; }
+  .logo-mark span:nth-child(2){ height:15px; }
+  .logo-mark span:nth-child(3){ height:22px; background:var(--coral); }
+  .wordmark{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--ink); }
+  nav{ display:flex; align-items:center; gap:30px; }
+  nav a{ color:var(--muted); text-decoration:none; font-size:14px; font-weight:500; padding-bottom:4px; border-bottom:2px solid transparent; }
+  nav a.active{ color:var(--ink); border-bottom-color:var(--coral); }
+
+  .shell { max-width: 1040px; margin: 0 auto; padding: 36px 48px 64px; }
+  .page-head { margin-bottom: 24px; }
+  .page-head h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; }
+  .page-head p { color: var(--muted); font-size: 14px; margin: 0; }
+
+  #search {
+    width: 100%; max-width: 360px; padding: 10px 14px; margin-bottom: 18px;
+    border: 1px solid var(--line); border-radius: 8px; font-family: 'Inter'; font-size: 14px;
+    background: #fff; color: var(--ink);
+  }
+
+  #chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .chip {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--card-bg); color: var(--ink); cursor: pointer; text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+  .chip:hover { border-color: var(--teal); }
+
+  .category { margin-bottom: 40px; }
+  .category-head { margin-bottom: 16px; }
+  .category-head h2 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+  .category-head p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--card-bg); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .card h3 { font-size: 15px; font-weight: 600; margin: 0; font-family: 'Inter'; }
+  .card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+  .card .meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); margin-top: auto; padding-top: 8px; border-top: 1px solid var(--line); }
+  .card .price { font-weight: 600; color: var(--ink); }
+  .card a.site-link { font-size: 12px; color: var(--teal-deep); text-decoration: none; font-weight: 500; }
+  .verified { color: var(--teal-deep); }
+
+  .empty-card { color: var(--muted); font-size: 13px; padding: 16px 0; }
+  .state { color: var(--muted); font-size: 14px; padding: 40px 0; text-align: center; }
+
+  @media (max-width: 720px) {
+    .topbar, .shell { padding-left: 22px; padding-right: 22px; }
+    nav a:not(.active) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <div class="logo-mark"><span></span><span></span><span></span></div>
+      <div class="wordmark">stagely</div>
+    </a>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="catalogue.html" class="active">Catalogue</a>
+    </nav>
+  </div>
+
+  <div class="shell">
+    <div class="page-head">
+      <h1>Catalogue des logiciels</h1>
+      <p>Connecté en direct à la base Stagely.</p>
+    </div>
+
+    <input id="search" type="text" placeholder="Rechercher un logiciel..." />
+    <div id="chips"></div>
+    <div id="content"><p class="state">Chargement du catalogue…</p></div>
+  </div>
+
+<script>
+  const SUPABASE_URL = "https://wbksebogmyqyjqthwamw.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6India3NlYm9nbXlxeWpxdGh3YW13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1OTU3NjUsImV4cCI6MjEwNDE3MTc2NX0.zsNUwuBAUWpDbssL_Dg2CxCfXPshpa3X_YHHia5n7lc";
+
+  async function sb(path) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+      }
+    });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    return res.json();
+  }
+
+  function priceLabel(p) {
+    if (p.pricing_model === "quote_only") return "Sur devis";
+    if (p.starting_price_usd == null) return "Prix non renseigné";
+    const unit = p.pricing_model === "per_seat" ? "/siège" : p.pricing_model === "usage_based" ? " (usage)" : "";
+    return `${p.starting_price_usd} $${unit}`;
+  }
+
+  function productCard(p) {
+    const verified = p.verified_at ? new Date(p.verified_at).toLocaleDateString("fr-FR") : null;
+    return `
+      <div class="card" data-name="${(p.name || "").toLowerCase()}" data-desc="${(p.short_description || "").toLowerCase()}">
+        <h3>${p.name}</h3>
+        <p>${p.short_description || ""}</p>
+        <div class="meta">
+          <span class="price">${priceLabel(p)}</span>
+          ${p.website_url ? `<a class="site-link" href="${p.website_url}" target="_blank" rel="noopener">Site ↗</a>` : ""}
+        </div>
+        <div class="meta">
+          ${verified ? `<span class="verified">Vérifié le ${verified}</span>` : `<span>Non vérifié</span>`}
+        </div>
+      </div>
+    `;
+  }
+
+  function categorySection(cat, products) {
+    const cards = products.length
+      ? products.map(productCard).join("")
+      : `<div class="empty-card">Aucun logiciel ajouté dans cette catégorie pour le moment.</div>`;
+
+    return `
+      <section class="category" id="cat-${cat.slug}">
+        <div class="category-head">
+          <h2>${cat.name}</h2>
+          ${cat.description ? `<p>${cat.description}</p>` : ""}
+        </div>
+        <div class="grid">${cards}</div>
+      </section>
+    `;
+  }
+
+  async function init() {
+    const contentEl = document.getElementById("content");
+    const chipsEl = document.getElementById("chips");
+
+    try {
+      const [categories, links] = await Promise.all([
+        sb("software_categories?select=*&order=name.asc"),
+        sb("software_product_categories?select=category_id,is_primary,software_products(*)")
+      ]);
+
+      if (!categories.length) {
+        contentEl.innerHTML = `<p class="state">Aucune catégorie trouvée dans la base.</p>`;
+        return;
+      }
+
+      // group products by category_id via the join table
+      const productsByCategory = {};
+      links.forEach(link => {
+        if (!link.software_products) return;
+        if (!productsByCategory[link.category_id]) productsByCategory[link.category_id] = [];
+        productsByCategory[link.category_id].push(link.software_products);
+      });
+
+      chipsEl.innerHTML = categories
+        .map(c => `<a class="chip" href="#cat-${c.slug}">${c.name}</a>`)
+        .join("");
+
+      contentEl.innerHTML = categories
+        .map(cat => categorySection(cat, productsByCategory[cat.id] || []))
+        .join("");
+
+      document.getElementById("search").addEventListener("input", (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        document.querySelectorAll(".card").forEach(card => {
+          const match = !q || card.dataset.name.includes(q) || card.dataset.desc.includes(q);
+          card.style.display = match ? "" : "none";
+        });
+      });
+    } catch (err) {
+      contentEl.innerHTML = `<p class="state">Impossible de charger le catalogue (${err.message}).</p>`;
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>
