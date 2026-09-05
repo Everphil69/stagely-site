@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stagely — diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0F6E56;
+    --teal-light: #E1F1EC;
+    --coral: #D85A30;
+    --coral-light: #FBEAE3;
+    --ivory: #F7F5F1;
+    --ink: #2C2C2A;
+    --muted: #5F5E5A;
+    --line: #E4E1D8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 48px;
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar .brand { text-decoration: none; margin-bottom: 0; }
+  .topbar nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  .topbar nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  .topbar nav a.active { color: var(--ink); border-bottom-color: var(--coral); }
+  .page-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 560px;
+  }
+  .brandrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  .steps {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 18px;
+  }
+  .steps .bar {
+    width: 6px;
+    background: var(--line);
+    border-radius: 1px;
+  }
+  .steps .bar:nth-child(1) { height: 8px; }
+  .steps .bar:nth-child(2) { height: 13px; }
+  .steps .bar:nth-child(3) { height: 18px; background: var(--coral); }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark { display: flex; align-items: flex-end; gap: 3px; height: 22px; }
+  .logo-mark span { width: 6px; display: block; border-radius: 1px; background: var(--teal); }
+  .logo-mark span:nth-child(1) { height: 9px; }
+  .logo-mark span:nth-child(2) { height: 15px; }
+  .logo-mark span:nth-child(3) { height: 22px; background: var(--coral); }
+  .wordmark {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--ink);
+  }
+  .progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 36px;
+  }
+  .progress .dot {
+    height: 3px;
+    flex: 1;
+    background: var(--line);
+    border-radius: 2px;
+    transition: background 0.2s ease;
+  }
+  .progress .dot.done { background: var(--teal); }
+  .progress .dot.current { background: var(--coral); }
+  .step { display: none; }
+  .step.active { display: block; animation: fade 0.25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .eyebrow {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 1.3;
+    margin: 0 0 24px;
+    max-width: 90%;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    padding: 13px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+  }
+  input[type="text"]:focus, textarea:focus { border-color: var(--teal); }
+  textarea { resize: vertical; min-height: 90px; font-family: 'Inter', sans-serif; line-height: 1.6; }
+  .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    text-align: left;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .opt:hover { border-color: var(--teal); }
+  .opt.selected { border-color: var(--teal); background: var(--teal-light); color: var(--teal); font-weight: 500; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; }
+  .back {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 0;
+  }
+  .back:disabled { visibility: hidden; }
+  .next {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 26px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .next:hover { background: #0c5c46; }
+  .error { font-size: 13px; color: var(--coral); margin-top: 8px; display: none; }
+
+  /* chat screen */
+  .chat-wrap { display: none; }
+  .chat-wrap.active { display: block; animation: fade 0.25s ease; }
+  .chat-thread { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+  .bubble-bot {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 88%;
+  }
+  .suggestions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .suggestion {
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 13px 15px;
+    font-size: 14.5px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .suggestion:hover { border-color: var(--coral); }
+  .suggestion.other { color: var(--muted); }
+  .composer { display: none; margin-top: 16px; }
+  .composer.active { display: flex; gap: 8px; }
+  .composer textarea { flex: 1; min-height: 44px; }
+  .send {
+    background: var(--coral);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .bubble-user {
+    align-self: flex-end;
+    background: var(--coral-light);
+    color: var(--ink);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15px;
+    max-width: 88%;
+  }
+  .summary {
+    margin-top: 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'Inter', monospace;
+    white-space: pre-wrap;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="brand" href="index.html">
+    <div class="logo-mark"><span></span><span></span><span></span></div>
+    <div class="wordmark">stagely</div>
+  </a>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="diagnostic-form.html" class="active">Diagnostic</a>
+    <a href="catalogue.html">Catalogue</a>
+  </nav>
+</div>
+
+<div class="page-wrap">
+<div class="card">
+  <div class="progress" id="progress"></div>
+
+  <form id="form">
+    <div class="step" data-step="0">
+      <p class="eyebrow">Étape 1 sur 5</p>
+      <h1>Quel est le site web de ton entreprise ?</h1>
+      <input type="text" id="website" placeholder="tonentreprise.com">
+      <p class="error" id="err-0">Entre une adresse pour continuer.</p>
+    </div>
+
+    <div class="step" data-step="1">
+      <p class="eyebrow">Étape 2 sur 5</p>
+      <h1>Décris ton entreprise en quelques mots</h1>
+      <textarea id="description" placeholder="On aide les équipes RH à automatiser leur onboarding..."></textarea>
+      <p class="hint">Autant de détails que tu veux, ça nous aide à mieux cerner tes besoins.</p>
+      <p class="error" id="err-1">Ajoute une courte description pour continuer.</p>
+    </div>
+
+    <div class="step" data-step="2">
+      <p class="eyebrow">Étape 3 sur 5</p>
+      <h1>Combien de personnes travaillent chez vous ?</h1>
+      <div class="options" data-field="headcount">
+        <button type="button" class="opt">1 à 10</button>
+        <button type="button" class="opt">11 à 50</button>
+        <button type="button" class="opt">51 à 200</button>
+        <button type="button" class="opt">201 à 500</button>
+        <button type="button" class="opt">Plus de 500</button>
+      </div>
+      <p class="error" id="err-2">Choisis une tranche pour continuer.</p>
+    </div>
+
+    <div class="step" data-step="3">
+      <p class="eyebrow">Étape 4 sur 5</p>
+      <h1>Vous vendez plutôt à des entreprises ou à des particuliers ?</h1>
+      <div class="options" data-field="market">
+        <button type="button" class="opt">B2B, à d'autres entreprises</button>
+        <button type="button" class="opt">B2C, à des particuliers</button>
+        <button type="button" class="opt">Les deux</button>
+      </div>
+      <p class="error" id="err-3">Fais un choix pour continuer.</p>
+    </div>
+
+    <div class="step" data-step="4">
+      <p class="eyebrow">Étape 5 sur 5</p>
+      <h1>Quelle équipe est concernée par ce besoin ?</h1>
+      <div class="options" data-field="function">
+        <button type="button" class="opt">Vente</button>
+        <button type="button" class="opt">Marketing</button>
+        <button type="button" class="opt">Support client</button>
+        <button type="button" class="opt">Finance</button>
+        <button type="button" class="opt">Ingénierie / IT</button>
+        <button type="button" class="opt">RH</button>
+        <button type="button" class="opt">Autre</button>
+      </div>
+      <p class="error" id="err-4">Choisis une équipe pour continuer.</p>
+    </div>
+
+    <div class="nav">
+      <button type="button" class="back" id="backBtn">Retour</button>
+      <button type="button" class="next" id="nextBtn">Continuer</button>
+    </div>
+  </form>
+
+  <div class="chat-wrap" id="chatWrap">
+    <div class="chat-thread" id="chatThread">
+      <div class="bubble-bot">Dis-moi ce que tu cherches à améliorer côté vente, ou choisis un exemple ci-dessous.</div>
+    </div>
+    <div class="suggestions" id="suggestions">
+      <button type="button" class="suggestion" data-text="Je veux un système pour prospecter, suivre mes deals et les signer">Je veux un système pour prospecter, suivre mes deals et les signer</button>
+      <button type="button" class="suggestion" data-text="Je veux monitorer et améliorer mes processus commerciaux">Je veux monitorer et améliorer mes processus commerciaux</button>
+      <button type="button" class="suggestion" data-text="Je pars de zéro, j'ai besoin d'une base pour collaborer et vendre">Je pars de zéro, j'ai besoin d'une base pour collaborer et vendre</button>
+      <button type="button" class="suggestion other" id="otherBtn">Autre, je préfère décrire mon besoin</button>
+    </div>
+    <div class="composer" id="composer">
+      <textarea id="freeText" placeholder="Décris ton besoin..."></textarea>
+      <button type="button" class="send" id="sendBtn">Envoyer</button>
+    </div>
+    <div class="summary" id="summary"></div>
+    <p class="hint" id="loading" style="display:none;">Analyse en cours, ça prend quelques secondes...</p>
+    <p class="error" id="submitError" style="display:none;"></p>
+    <div class="nav" id="resultNav" style="display:none;">
+      <span></span>
+      <button type="button" class="next" id="resultBtn">Voir mon diagnostic</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+  const state = { website: '', description: '', headcount: '', market: '', func: '' };
+  let currentStep = 0;
+  const totalSteps = 5;
+
+  const progressEl = document.getElementById('progress');
+  for (let i = 0; i < totalSteps; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    progressEl.appendChild(d);
+  }
+
+  function updateProgress() {
+    const dots = progressEl.querySelectorAll('.dot');
+    dots.forEach((d, i) => {
+      d.className = 'dot' + (i < currentStep ? ' done' : i === currentStep ? ' current' : '');
+    });
+  }
+
+  function showStep(i) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelector('.step[data-step="' + i + '"]').classList.add('active');
+    document.getElementById('backBtn').disabled = i === 0;
+    document.getElementById('nextBtn').textContent = i === totalSteps - 1 ? 'Voir mon diagnostic' : 'Continuer';
+    updateProgress();
+    hideError(i);
+  }
+
+  function hideError(i) {
+    const e = document.getElementById('err-' + i);
+    if (e) e.style.display = 'none';
+  }
+
+  document.querySelectorAll('.options').forEach(group => {
+    group.querySelectorAll('.opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+  });
+
+  function validateStep(i) {
+    if (i === 0) return document.getElementById('website').value.trim().length > 0;
+    if (i === 1) return document.getElementById('description').value.trim().length > 0;
+    if (i === 2) return !!document.querySelector('.step[data-step="2"] .opt.selected');
+    if (i === 3) return !!document.querySelector('.step[data-step="3"] .opt.selected');
+    if (i === 4) return !!document.querySelector('.step[data-step="4"] .opt.selected');
+    return true;
+  }
+
+  function captureStep(i) {
+    if (i === 0) state.website = document.getElementById('website').value.trim();
+    if (i === 1) state.description = document.getElementById('description').value.trim();
+    if (i === 2) state.headcount = document.querySelector('.step[data-step="2"] .opt.selected').textContent;
+    if (i === 3) state.market = document.querySelector('.step[data-step="3"] .opt.selected').textContent;
+    if (i === 4) state.func = document.querySelector('.step[data-step="4"] .opt.selected').textContent;
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (!validateStep(currentStep)) {
+      document.getElementById('err-' + currentStep).style.display = 'block';
+      return;
+    }
+    captureStep(currentStep);
+    if (currentStep < totalSteps - 1) {
+      currentStep++;
+      showStep(currentStep);
+    } else {
+      document.getElementById('form').style.display = 'none';
+      document.getElementById('progress').style.display = 'none';
+      document.getElementById('chatWrap').classList.add('active');
+    }
+  });
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    if (currentStep > 0) {
+      currentStep--;
+      showStep(currentStep);
+    }
+  });
+
+  showStep(0);
+
+  function addUserBubble(text) {
+    const thread = document.getElementById('chatThread');
+    const b = document.createElement('div');
+    b.className = 'bubble-user';
+    b.textContent = text;
+    thread.appendChild(b);
+    document.getElementById('suggestions').style.display = 'none';
+    document.getElementById('composer').classList.remove('active');
+    showSummary(text);
+  }
+
+  document.querySelectorAll('.suggestion:not(.other)').forEach(btn => {
+    btn.addEventListener('click', () => addUserBubble(btn.dataset.text));
+  });
+
+  document.getElementById('otherBtn').addEventListener('click', () => {
+    document.getElementById('composer').classList.add('active');
+    document.getElementById('freeText').focus();
+  });
+
+  document.getElementById('sendBtn').addEventListener('click', () => {
+    const val = document.getElementById('freeText').value.trim();
+    if (!val) return;
+    addUserBubble(val);
+  });
+
+  const SUPABASE_URL = 'https://wbksebogmyqyjqthwamw.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6India3NlYm9nbXlxeWpxdGh3YW13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1OTU3NjUsImV4cCI6MjEwNDE3MTc2NX0.zsNUwuBAUWpDbssL_Dg2CxCfXPshpa3X_YHHia5n7lc';
+
+  async function showSummary(rawInput) {
+    const payload = {
+      website: state.website,
+      description: state.description,
+      headcount_range: state.headcount,
+      market: state.market,
+      function: state.func,
+      raw_input: rawInput
+    };
+
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('submitError').style.display = 'none';
+    document.getElementById('resultNav').style.display = 'none';
+
+    try {
+      const res = await fetch(SUPABASE_URL + '/functions/v1/diagnostic', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'apikey': SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur inconnue');
+
+      sessionStorage.setItem('stagely_diagnostic_result', JSON.stringify({ input: payload, result: data }));
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('resultNav').style.display = 'flex';
+      document.getElementById('resultBtn').onclick = () => { window.location.href = 'diagnostic.html'; };
+    } catch (err) {
+      document.getElementById('loading').style.display = 'none';
+      const errEl = document.getElementById('submitError');
+      errEl.textContent = "Le diagnostic n'a pas pu être généré (" + err.message + "). Réessaie dans un instant.";
+      errEl.style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>

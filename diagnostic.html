@@ -135,91 +135,123 @@
     </a>
     <nav>
       <a href="index.html">Accueil</a>
-      <a href="diagnostic.html" class="active">Diagnostic</a>
+      <a href="diagnostic-form.html" class="active">Diagnostic</a>
       <a href="catalogue.html">Catalogue</a>
     </nav>
-    <div class="avatar">NA</div>
   </div>
 
-  <div class="context">
-    <div class="label">Diagnostic — Northwind Analytics</div>
-    <h1>Le bon stack pour votre stade, pas le plus gros.</h1>
-    <p>12 personnes, cycle de vente de 3 semaines, prospection outbound principalement. Voici ce qu'il vous faut maintenant — et ce qui peut attendre.</p>
-
-    <div class="stage-row">
-      <div class="stage done"><div class="bar"></div><span>Amorçage</span></div>
-      <div class="stage current"><div class="bar"></div><span>Early stage</span></div>
-      <div class="stage"><div class="bar"></div><span>Croissance</span></div>
-    </div>
+  <div id="emptyState" style="display:none; max-width:920px; margin:0 auto; padding:64px 48px; text-align:center;">
+    <h1 style="font-size:26px; font-weight:500;">Aucun diagnostic pour l'instant</h1>
+    <p style="color:var(--gray); margin:12px 0 28px;">Lance le diagnostic pour voir ton stack recommandé, généré à partir de ta situation et de notre catalogue.</p>
+    <a class="btn" href="diagnostic-form.html" style="text-decoration:none; display:inline-block;">Lancer mon diagnostic</a>
   </div>
 
-  <div class="section">
-    <div class="section-head">
-      <div>
-        <h2>Votre stack recommandé</h2>
-        <p>5 outils couvrent l'essentiel de votre cycle de vente actuel. Chaque prix est comparé à ce que des équipes comparables ont réellement obtenu.</p>
+  <div id="resultWrap">
+    <div class="context">
+      <div class="label" id="ctxLabel">Diagnostic</div>
+      <h1 id="ctxHeadline">Le bon stack pour votre stade, pas le plus gros.</h1>
+      <p id="ctxSummary"></p>
+
+      <div class="stage-row" id="stageRow">
+        <div class="stage"><div class="bar"></div><span>Amorçage</span></div>
+        <div class="stage"><div class="bar"></div><span>Early stage</span></div>
+        <div class="stage"><div class="bar"></div><span>Croissance</span></div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="cat">CRM & pipeline</div>
-      <div class="tool">
-        <h3>HubSpot Sales Hub — Pro</h3>
-        <p>Suffisant à votre taille ; l'Enterprise n'apporte rien avant 25+ commerciaux.</p>
-        <div class="tags"><span class="tag">Public officiel</span><span class="tag">Compatible avec votre stack</span></div>
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <h2>Votre stack recommandé</h2>
+          <p>Généré à partir de votre situation et du catalogue Stagely. Pas de prix comparés pour l'instant : on n'a pas encore de données de négociation fiables.</p>
+        </div>
       </div>
-      <div class="price">
-        <div class="amount">100 $/siège</div>
-        <div class="bench-track"><div class="bench-range" style="left:30%;width:35%;"></div><div class="bench-dot" style="left:52%;"></div></div>
-        <div class="bench-label">Dans la fourchette négociée</div>
+
+      <div id="rowsWrap"></div>
+    </div>
+
+    <div class="section" style="padding-top:0;">
+      <div class="compat">
+        <div>
+          <h3>Compatibilité entre les outils recommandés</h3>
+          <p id="compatNote"></p>
+        </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="cat">Sourcing & enrichissement</div>
-      <div class="tool">
-        <h3>Clay — Launch</h3>
-        <p>Couvre vos volumes actuels de prospection ; repasser à Growth au-delà de 2 000 leads/mois.</p>
-        <div class="tags"><span class="tag warn">Prix volatil — à revérifier</span></div>
-      </div>
-      <div class="price">
-        <div class="amount">185 $/mois</div>
-        <div class="bench-track"><div class="bench-range" style="left:15%;width:40%;"></div><div class="bench-dot" style="left:22%;"></div></div>
-        <div class="bench-label">Sous la médiane du marché</div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="cat">Proposition & signature</div>
-      <div class="tool">
-        <h3>PandaDoc — Business</h3>
-        <p>Signature et suivi de devis, connecté nativement à votre CRM recommandé.</p>
-        <div class="tags"><span class="tag">Compatible avec votre stack</span></div>
-      </div>
-      <div class="price">
-        <div class="amount">49 $/siège</div>
-        <div class="bench-track"><div class="bench-range" style="left:25%;width:35%;"></div><div class="bench-dot" style="left:68%;"></div></div>
-        <div class="bench-label">17 % au-dessus de la médiane négociée</div>
-      </div>
+    <div class="cta-row">
+      <a class="btn" href="diagnostic-form.html" style="text-decoration:none; display:inline-block;">Relancer un diagnostic</a>
     </div>
   </div>
 
-  <div class="section" style="padding-top:0;">
-    <div class="compat">
-      <div>
-        <h3>Compatibilité avec votre stack actuelle</h3>
-        <p>PandaDoc synchronise nativement avec HubSpot. Aucune rupture de flux de données détectée sur les 3 outils recommandés.</p>
-      </div>
-      <div class="gauge">
-        <div class="num">94</div>
-        <div class="cap">score de compatibilité</div>
-      </div>
-    </div>
-  </div>
+<script>
+  const STAGE_LABELS = { amorcage: 'Amorçage', early_stage: 'Early stage', croissance: 'Croissance' };
+  const STAGE_ORDER = ['amorcage', 'early_stage', 'croissance'];
+  const PRICING_LABELS = { flat: '/mois', per_seat: '/siège', usage_based: '/usage', quote_only: '' };
 
-  <div class="cta-row">
-    <button class="btn">Voir le détail du benchmark</button>
-  </div>
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str ?? '';
+    return d.innerHTML;
+  }
 
+  function formatPrice(product) {
+    if (!product.pricing_model || product.pricing_model === 'quote_only' || product.starting_price_usd == null) {
+      return 'Prix sur devis';
+    }
+    return 'À partir de ' + product.starting_price_usd + ' $' + (PRICING_LABELS[product.pricing_model] || '');
+  }
+
+  function render(stored) {
+    const { input, result } = stored;
+
+    document.getElementById('ctxLabel').textContent = 'Diagnostic' + (input.website ? ' — ' + input.website : '');
+    document.getElementById('ctxHeadline').textContent = result.headline || 'Le bon stack pour votre stade, pas le plus gros.';
+    document.getElementById('ctxSummary').textContent = result.summary || '';
+
+    const currentIdx = STAGE_ORDER.indexOf(result.stage);
+    const stageEls = document.querySelectorAll('#stageRow .stage');
+    stageEls.forEach((el, i) => {
+      el.classList.remove('done', 'current');
+      if (currentIdx === -1) return;
+      if (i < currentIdx) el.classList.add('done');
+      if (i === currentIdx) el.classList.add('current');
+    });
+
+    const rowsWrap = document.getElementById('rowsWrap');
+    rowsWrap.innerHTML = '';
+    (result.recommendations || []).forEach(rec => {
+      const p = rec.product;
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <div class="cat">${escapeHtml(p.category || '')}</div>
+        <div class="tool">
+          <h3>${escapeHtml(p.name)}</h3>
+          <p>${escapeHtml(rec.reasoning || p.short_description || '')}</p>
+          <div class="tags">${rec.priority === 'must_have' ? '<span class="tag">Essentiel maintenant</span>' : '<span class="tag warn">Peut attendre</span>'}</div>
+        </div>
+        <div class="price">
+          <div class="amount">${escapeHtml(formatPrice(p))}</div>
+        </div>`;
+      rowsWrap.appendChild(row);
+    });
+
+    document.getElementById('compatNote').textContent = result.compatibility_note || '';
+  }
+
+  const raw = sessionStorage.getItem('stagely_diagnostic_result');
+  if (!raw) {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('resultWrap').style.display = 'none';
+  } else {
+    try {
+      render(JSON.parse(raw));
+    } catch {
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('resultWrap').style.display = 'none';
+    }
+  }
+</script>
 </body>
 </html>
