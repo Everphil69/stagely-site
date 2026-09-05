@@ -258,14 +258,14 @@
 
   <form id="form">
     <div class="step" data-step="0">
-      <p class="eyebrow">Étape 1 sur 5</p>
+      <p class="eyebrow">Étape 1 sur 6</p>
       <h1>Quel est le site web de ton entreprise ?</h1>
       <input type="text" id="website" placeholder="tonentreprise.com">
       <p class="error" id="err-0">Entre une adresse pour continuer.</p>
     </div>
 
     <div class="step" data-step="1">
-      <p class="eyebrow">Étape 2 sur 5</p>
+      <p class="eyebrow">Étape 2 sur 6</p>
       <h1>Décris ton entreprise en quelques mots</h1>
       <textarea id="description" placeholder="On aide les équipes RH à automatiser leur onboarding..."></textarea>
       <p class="hint">Autant de détails que tu veux, ça nous aide à mieux cerner tes besoins.</p>
@@ -273,7 +273,7 @@
     </div>
 
     <div class="step" data-step="2">
-      <p class="eyebrow">Étape 3 sur 5</p>
+      <p class="eyebrow">Étape 3 sur 6</p>
       <h1>Combien de personnes travaillent chez vous ?</h1>
       <div class="options" data-field="headcount">
         <button type="button" class="opt">1 à 10</button>
@@ -286,7 +286,7 @@
     </div>
 
     <div class="step" data-step="3">
-      <p class="eyebrow">Étape 4 sur 5</p>
+      <p class="eyebrow">Étape 4 sur 6</p>
       <h1>Vous vendez plutôt à des entreprises ou à des particuliers ?</h1>
       <div class="options" data-field="market">
         <button type="button" class="opt">B2B, à d'autres entreprises</button>
@@ -297,7 +297,7 @@
     </div>
 
     <div class="step" data-step="4">
-      <p class="eyebrow">Étape 5 sur 5</p>
+      <p class="eyebrow">Étape 5 sur 6</p>
       <h1>Quelle équipe est concernée par ce besoin ?</h1>
       <div class="options" data-field="function">
         <button type="button" class="opt">Vente</button>
@@ -318,6 +318,7 @@
   </form>
 
   <div class="chat-wrap" id="chatWrap">
+    <p class="eyebrow">Étape 6 sur 6</p>
     <div class="chat-thread" id="chatThread">
       <div class="bubble-bot">Dis-moi ce que tu cherches à améliorer côté vente, ou choisis un exemple ci-dessous.</div>
     </div>
@@ -334,9 +335,9 @@
     <div class="summary" id="summary"></div>
     <p class="hint" id="loading" style="display:none;">Analyse en cours, ça prend quelques secondes...</p>
     <p class="error" id="submitError" style="display:none;"></p>
-    <div class="nav" id="resultNav" style="display:none;">
-      <span></span>
-      <button type="button" class="next" id="resultBtn">Voir mon diagnostic</button>
+    <div class="nav">
+      <button type="button" class="back" id="chatBackBtn">Retour</button>
+      <button type="button" class="next" id="resultBtn" style="display:none;">Voir mon diagnostic</button>
     </div>
   </div>
 </div>
@@ -346,9 +347,11 @@
   const state = { website: '', description: '', headcount: '', market: '', func: '' };
   let currentStep = 0;
   const totalSteps = 5;
+  const totalDots = totalSteps + 1;
+  const chatStepIndex = totalSteps;
 
   const progressEl = document.getElementById('progress');
-  for (let i = 0; i < totalSteps; i++) {
+  for (let i = 0; i < totalDots; i++) {
     const d = document.createElement('div');
     d.className = 'dot';
     progressEl.appendChild(d);
@@ -401,6 +404,25 @@
     if (i === 4) state.func = document.querySelector('.step[data-step="4"] .opt.selected').textContent;
   }
 
+  function showChat() {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('chatWrap').classList.add('active');
+    updateProgress();
+  }
+
+  function resetChatUI() {
+    document.getElementById('chatWrap').classList.remove('active');
+    document.getElementById('chatThread').innerHTML =
+      '<div class="bubble-bot">Dis-moi ce que tu cherches à améliorer côté vente, ou choisis un exemple ci-dessous.</div>';
+    document.getElementById('suggestions').style.display = '';
+    document.getElementById('composer').classList.remove('active');
+    document.getElementById('freeText').value = '';
+    document.getElementById('summary').style.display = 'none';
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('submitError').style.display = 'none';
+    document.getElementById('resultBtn').style.display = 'none';
+  }
+
   document.getElementById('nextBtn').addEventListener('click', () => {
     if (!validateStep(currentStep)) {
       document.getElementById('err-' + currentStep).style.display = 'block';
@@ -412,8 +434,8 @@
       showStep(currentStep);
     } else {
       document.getElementById('form').style.display = 'none';
-      document.getElementById('progress').style.display = 'none';
-      document.getElementById('chatWrap').classList.add('active');
+      currentStep = chatStepIndex;
+      showChat();
     }
   });
 
@@ -422,6 +444,13 @@
       currentStep--;
       showStep(currentStep);
     }
+  });
+
+  document.getElementById('chatBackBtn').addEventListener('click', () => {
+    resetChatUI();
+    document.getElementById('form').style.display = '';
+    currentStep = totalSteps - 1;
+    showStep(currentStep);
   });
 
   showStep(0);
@@ -467,7 +496,7 @@
 
     document.getElementById('loading').style.display = 'block';
     document.getElementById('submitError').style.display = 'none';
-    document.getElementById('resultNav').style.display = 'none';
+    document.getElementById('resultBtn').style.display = 'none';
 
     try {
       const res = await fetch(SUPABASE_URL + '/functions/v1/diagnostic', {
@@ -484,7 +513,7 @@
 
       sessionStorage.setItem('stagely_diagnostic_result', JSON.stringify({ input: payload, result: data }));
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('resultNav').style.display = 'flex';
+      document.getElementById('resultBtn').style.display = 'inline-block';
       document.getElementById('resultBtn').onclick = () => { window.location.href = 'diagnostic.html'; };
     } catch (err) {
       document.getElementById('loading').style.display = 'none';
