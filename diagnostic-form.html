@@ -33,11 +33,7 @@
     border-bottom: 1px solid var(--line);
   }
   .topbar .brand { text-decoration: none; margin-bottom: 0; }
-  .topbar nav {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-  }
+  .topbar nav { display: flex; align-items: center; gap: 30px; }
   .topbar nav a {
     color: var(--muted);
     text-decoration: none;
@@ -47,133 +43,49 @@
     border-bottom: 2px solid transparent;
   }
   .topbar nav a.active { color: var(--ink); border-bottom-color: var(--coral); }
-  .page-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 48px 20px;
-  }
-  .card {
-    width: 100%;
-    max-width: 560px;
-  }
-  .brandrow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 40px;
-  }
-  .steps {
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    height: 18px;
-  }
-  .steps .bar {
-    width: 6px;
-    background: var(--line);
-    border-radius: 1px;
-  }
-  .steps .bar:nth-child(1) { height: 8px; }
-  .steps .bar:nth-child(2) { height: 13px; }
-  .steps .bar:nth-child(3) { height: 18px; background: var(--coral); }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .brand { display: flex; align-items: center; gap: 10px; }
   .logo-mark { display: flex; align-items: flex-end; gap: 3px; height: 22px; }
   .logo-mark span { width: 6px; display: block; border-radius: 1px; background: var(--teal); }
   .logo-mark span:nth-child(1) { height: 9px; }
   .logo-mark span:nth-child(2) { height: 15px; }
   .logo-mark span:nth-child(3) { height: 22px; background: var(--coral); }
-  .wordmark {
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    font-size: 19px;
-    color: var(--ink);
-  }
-  .progress {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 36px;
-  }
-  .progress .dot {
-    height: 3px;
-    flex: 1;
-    background: var(--line);
-    border-radius: 2px;
-    transition: background 0.2s ease;
-  }
+  .wordmark { font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px; color: var(--ink); }
+
+  .page-wrap { display: flex; justify-content: center; padding: 48px 20px; }
+  .card { width: 100%; max-width: 560px; }
+  .progress { display: flex; gap: 6px; margin-bottom: 36px; }
+  .progress .dot { height: 3px; flex: 1; background: var(--line); border-radius: 2px; transition: background 0.2s ease; }
   .progress .dot.done { background: var(--teal); }
   .progress .dot.current { background: var(--coral); }
   .step { display: none; }
   .step.active { display: block; animation: fade 0.25s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .eyebrow {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-  h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 500;
-    font-size: 26px;
-    line-height: 1.3;
-    margin: 0 0 24px;
-    max-width: 90%;
-  }
+  .eyebrow { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 26px; line-height: 1.3; margin: 0 0 24px; max-width: 90%; }
   input[type="text"], textarea {
-    width: 100%;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    padding: 13px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: #fff;
-    color: var(--ink);
-    outline: none;
+    width: 100%; font-family: 'Inter', sans-serif; font-size: 16px; padding: 13px 14px;
+    border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--ink); outline: none;
   }
   input[type="text"]:focus, textarea:focus { border-color: var(--teal); }
-  textarea { resize: vertical; min-height: 90px; font-family: 'Inter', sans-serif; line-height: 1.6; }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
   .options { display: flex; flex-direction: column; gap: 10px; }
   .opt {
-    text-align: left;
-    padding: 14px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    color: var(--ink);
-    cursor: pointer;
+    text-align: left; padding: 14px 16px; border-radius: 8px; border: 1px solid var(--line);
+    background: #fff; font-size: 15px; color: var(--ink); cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
   .opt:hover { border-color: var(--teal); }
   .opt.selected { border-color: var(--teal); background: var(--teal-light); color: var(--teal); font-weight: 500; }
   .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; }
-  .back {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 8px 0;
-  }
+  .back { background: none; border: none; color: var(--muted); font-size: 14px; cursor: pointer; padding: 8px 0; }
   .back:disabled { visibility: hidden; }
   .next {
-    background: var(--teal);
-    color: #fff;
-    border: none;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    padding: 12px 26px;
-    border-radius: 8px;
-    cursor: pointer;
+    background: var(--teal); color: #fff; border: none; font-size: 15px; font-weight: 500;
+    padding: 12px 26px; border-radius: 8px; cursor: pointer;
   }
   .next:hover { background: #0c5c46; }
+  .next:disabled { background: var(--line); cursor: not-allowed; }
   .error { font-size: 13px; color: var(--coral); margin-top: 8px; display: none; }
 
   /* chat screen */
@@ -181,61 +93,36 @@
   .chat-wrap.active { display: block; animation: fade 0.25s ease; }
   .chat-thread { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
   .bubble-bot {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 15px;
-    line-height: 1.6;
-    max-width: 88%;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px;
+    font-size: 15px; line-height: 1.6; max-width: 88%;
   }
-  .suggestions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .bubble-user {
+    align-self: flex-end; background: var(--coral-light); color: var(--ink);
+    border-radius: 12px; padding: 14px 16px; font-size: 15px; max-width: 88%;
+  }
+  .suggestions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
   .suggestion {
-    text-align: left;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 13px 15px;
-    font-size: 14.5px;
-    color: var(--ink);
-    cursor: pointer;
+    text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 13px 15px; font-size: 14.5px; color: var(--ink); cursor: pointer;
   }
   .suggestion:hover { border-color: var(--coral); }
   .suggestion.other { color: var(--muted); }
-  .composer { display: none; margin-top: 16px; }
-  .composer.active { display: flex; gap: 8px; }
+  .composer { display: flex; gap: 8px; margin-top: 16px; }
+  .composer.hidden { display: none; }
   .composer textarea { flex: 1; min-height: 44px; }
   .send {
-    background: var(--coral);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 0 20px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
+    background: var(--coral); color: #fff; border: none; border-radius: 8px; padding: 0 20px;
+    font-weight: 500; cursor: pointer;
   }
-  .bubble-user {
-    align-self: flex-end;
-    background: var(--coral-light);
-    color: var(--ink);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 15px;
-    max-width: 88%;
+  .send:disabled { background: var(--line); cursor: not-allowed; }
+  .typing { font-size: 13px; color: var(--muted); font-style: italic; margin: 4px 0 10px; }
+  .finish-row { margin-top: 18px; display: none; }
+  .finish-row.visible { display: flex; justify-content: flex-end; }
+  .finish-btn {
+    background: none; border: 1px solid var(--teal); color: var(--teal); border-radius: 8px;
+    padding: 10px 18px; font-size: 14px; font-weight: 500; cursor: pointer;
   }
-  .summary {
-    margin-top: 20px;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 16px;
-    font-size: 13px;
-    color: var(--muted);
-    font-family: 'Inter', monospace;
-    white-space: pre-wrap;
-    display: none;
-  }
+  .finish-btn:hover { background: var(--teal-light); }
 </style>
 </head>
 <body>
@@ -258,22 +145,14 @@
 
   <form id="form">
     <div class="step" data-step="0">
-      <p class="eyebrow">Étape 1 sur 6</p>
+      <p class="eyebrow">Étape 1 sur 5</p>
       <h1>Quel est le site web de ton entreprise ?</h1>
       <input type="text" id="website" placeholder="tonentreprise.com">
       <p class="error" id="err-0">Entre une adresse pour continuer.</p>
     </div>
 
     <div class="step" data-step="1">
-      <p class="eyebrow">Étape 2 sur 6</p>
-      <h1>Décris ton entreprise en quelques mots</h1>
-      <textarea id="description" placeholder="On aide les équipes RH à automatiser leur onboarding..."></textarea>
-      <p class="hint">Autant de détails que tu veux, ça nous aide à mieux cerner tes besoins.</p>
-      <p class="error" id="err-1">Ajoute une courte description pour continuer.</p>
-    </div>
-
-    <div class="step" data-step="2">
-      <p class="eyebrow">Étape 3 sur 6</p>
+      <p class="eyebrow">Étape 2 sur 5</p>
       <h1>Combien de personnes travaillent chez vous ?</h1>
       <div class="options" data-field="headcount">
         <button type="button" class="opt">1 à 10</button>
@@ -282,33 +161,29 @@
         <button type="button" class="opt">201 à 500</button>
         <button type="button" class="opt">Plus de 500</button>
       </div>
-      <p class="error" id="err-2">Choisis une tranche pour continuer.</p>
+      <p class="error" id="err-1">Choisis une tranche pour continuer.</p>
     </div>
 
-    <div class="step" data-step="3">
-      <p class="eyebrow">Étape 4 sur 6</p>
+    <div class="step" data-step="2">
+      <p class="eyebrow">Étape 3 sur 5</p>
       <h1>Vous vendez plutôt à des entreprises ou à des particuliers ?</h1>
       <div class="options" data-field="market">
         <button type="button" class="opt">B2B, à d'autres entreprises</button>
         <button type="button" class="opt">B2C, à des particuliers</button>
         <button type="button" class="opt">Les deux</button>
       </div>
-      <p class="error" id="err-3">Fais un choix pour continuer.</p>
+      <p class="error" id="err-2">Fais un choix pour continuer.</p>
     </div>
 
-    <div class="step" data-step="4">
-      <p class="eyebrow">Étape 5 sur 6</p>
-      <h1>Quelle équipe est concernée par ce besoin ?</h1>
-      <div class="options" data-field="function">
-        <button type="button" class="opt">Vente</button>
-        <button type="button" class="opt">Marketing</button>
-        <button type="button" class="opt">Support client</button>
-        <button type="button" class="opt">Finance</button>
-        <button type="button" class="opt">Ingénierie / IT</button>
-        <button type="button" class="opt">RH</button>
-        <button type="button" class="opt">Autre</button>
+    <div class="step" data-step="3">
+      <p class="eyebrow">Étape 4 sur 5</p>
+      <h1>Tu préfères un outil qui fait un peu tout, ou plusieurs outils spécialisés ?</h1>
+      <div class="options" data-field="toolPreference">
+        <button type="button" class="opt">Un seul outil généraliste, quitte à perdre en profondeur</button>
+        <button type="button" class="opt">Plusieurs outils, chacun plus performant sur son sujet</button>
+        <button type="button" class="opt">Peu importe, fais-moi la meilleure proposition</button>
       </div>
-      <p class="error" id="err-4">Choisis une équipe pour continuer.</p>
+      <p class="error" id="err-3">Fais un choix pour continuer.</p>
     </div>
 
     <div class="nav">
@@ -318,35 +193,106 @@
   </form>
 
   <div class="chat-wrap" id="chatWrap">
-    <p class="eyebrow">Étape 6 sur 6</p>
-    <div class="chat-thread" id="chatThread">
-      <div class="bubble-bot">Dis-moi ce que tu cherches à améliorer côté vente, ou choisis un exemple ci-dessous.</div>
-    </div>
-    <div class="suggestions" id="suggestions">
-      <button type="button" class="suggestion" data-text="Je veux un système pour prospecter, suivre mes deals et les signer">Je veux un système pour prospecter, suivre mes deals et les signer</button>
-      <button type="button" class="suggestion" data-text="Je veux monitorer et améliorer mes processus commerciaux">Je veux monitorer et améliorer mes processus commerciaux</button>
-      <button type="button" class="suggestion" data-text="Je pars de zéro, j'ai besoin d'une base pour collaborer et vendre">Je pars de zéro, j'ai besoin d'une base pour collaborer et vendre</button>
-      <button type="button" class="suggestion other" id="otherBtn">Autre, je préfère décrire mon besoin</button>
-    </div>
-    <div class="composer" id="composer">
-      <textarea id="freeText" placeholder="Décris ton besoin..."></textarea>
+    <p class="eyebrow">Étape 5 sur 5</p>
+    <div class="chat-thread" id="chatThread"></div>
+    <p class="typing" id="typing" style="display:none;">L'assistant réfléchit...</p>
+    <div class="suggestions" id="suggestions"></div>
+    <div class="composer hidden" id="composer">
+      <textarea id="freeText" placeholder="Écris ta réponse..."></textarea>
       <button type="button" class="send" id="sendBtn">Envoyer</button>
     </div>
-    <div class="summary" id="summary"></div>
-    <p class="hint" id="loading" style="display:none;">Analyse en cours, ça prend quelques secondes...</p>
-    <p class="error" id="submitError" style="display:none;"></p>
+    <p class="error" id="chatError" style="display:none;"></p>
+    <div class="finish-row" id="finishRow">
+      <button type="button" class="finish-btn" id="finishBtn">J'ai fini, construire mon diagnostic</button>
+    </div>
     <div class="nav">
       <button type="button" class="back" id="chatBackBtn">Retour</button>
-      <button type="button" class="next" id="resultBtn" style="display:none;">Voir mon diagnostic</button>
+      <span></span>
     </div>
   </div>
 </div>
 </div>
 
 <script>
-  const state = { website: '', description: '', headcount: '', market: '', func: '' };
+  const SUPABASE_URL = 'https://wbksebogmyqyjqthwamw.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6India3NlYm9nbXlxeWpxdGh3YW13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1OTU3NjUsImV4cCI6MjEwNDE3MTc2NX0.zsNUwuBAUWpDbssL_Dg2CxCfXPshpa3X_YHHia5n7lc';
+
+  // ---------------------------------------------------------------------
+  // Anonymous auth: every visitor gets a real (RLS-respecting) identity
+  // with no signup friction. Session is cached in sessionStorage so it
+  // survives navigation to diagnostic.html within the same tab.
+  // ---------------------------------------------------------------------
+  const AUTH_STORAGE_KEY = 'stagely_auth_session';
+
+  async function signInAnonymously() {
+    const res = await fetch(SUPABASE_URL + '/auth/v1/signup', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.msg || data.error_description || data.error || 'Connexion anonyme impossible');
+    }
+    const session = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
+    };
+    sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    return session;
+  }
+
+  async function refreshSession(refresh_token) {
+    const res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token })
+    });
+    const data = await res.json();
+    if (!res.ok) return null;
+    const session = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
+    };
+    sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    return session;
+  }
+
+  async function getSession() {
+    const raw = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    if (raw) {
+      const cached = JSON.parse(raw);
+      if (cached.expires_at - 30 > Math.floor(Date.now() / 1000)) return cached;
+      const refreshed = await refreshSession(cached.refresh_token);
+      if (refreshed) return refreshed;
+    }
+    return signInAnonymously();
+  }
+
+  async function callFunction(name, payload, session) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + (session ? session.access_token : SUPABASE_ANON_KEY)
+    };
+    const res = await fetch(SUPABASE_URL + '/functions/v1/' + name, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur inconnue (' + name + ')');
+    return data;
+  }
+
+  // ---------------------------------------------------------------------
+  // Step form (company profile)
+  // ---------------------------------------------------------------------
+  const state = { website: '', headcount: '', market: '', toolPreference: '' };
   let currentStep = 0;
-  const totalSteps = 5;
+  const totalSteps = 4;
   const totalDots = totalSteps + 1;
   const chatStepIndex = totalSteps;
 
@@ -359,16 +305,14 @@
 
   function updateProgress() {
     const dots = progressEl.querySelectorAll('.dot');
-    dots.forEach((d, i) => {
-      d.className = 'dot' + (i < currentStep ? ' done' : i === currentStep ? ' current' : '');
-    });
+    dots.forEach((d, i) => { d.className = 'dot' + (i < currentStep ? ' done' : i === currentStep ? ' current' : ''); });
   }
 
   function showStep(i) {
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.querySelector('.step[data-step="' + i + '"]').classList.add('active');
     document.getElementById('backBtn').disabled = i === 0;
-    document.getElementById('nextBtn').textContent = i === totalSteps - 1 ? 'Voir mon diagnostic' : 'Continuer';
+    document.getElementById('nextBtn').textContent = i === totalSteps - 1 ? 'Continuer vers le chat' : 'Continuer';
     updateProgress();
     hideError(i);
   }
@@ -389,38 +333,26 @@
 
   function validateStep(i) {
     if (i === 0) return document.getElementById('website').value.trim().length > 0;
-    if (i === 1) return document.getElementById('description').value.trim().length > 0;
+    if (i === 1) return !!document.querySelector('.step[data-step="1"] .opt.selected');
     if (i === 2) return !!document.querySelector('.step[data-step="2"] .opt.selected');
     if (i === 3) return !!document.querySelector('.step[data-step="3"] .opt.selected');
-    if (i === 4) return !!document.querySelector('.step[data-step="4"] .opt.selected');
     return true;
   }
 
   function captureStep(i) {
     if (i === 0) state.website = document.getElementById('website').value.trim();
-    if (i === 1) state.description = document.getElementById('description').value.trim();
-    if (i === 2) state.headcount = document.querySelector('.step[data-step="2"] .opt.selected').textContent;
-    if (i === 3) state.market = document.querySelector('.step[data-step="3"] .opt.selected').textContent;
-    if (i === 4) state.func = document.querySelector('.step[data-step="4"] .opt.selected').textContent;
+    if (i === 1) state.headcount = document.querySelector('.step[data-step="1"] .opt.selected').textContent;
+    if (i === 2) state.market = document.querySelector('.step[data-step="2"] .opt.selected').textContent;
+    if (i === 3) state.toolPreference = document.querySelector('.step[data-step="3"] .opt.selected').textContent;
   }
 
-  function showChat() {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('chatWrap').classList.add('active');
-    updateProgress();
-  }
-
-  function resetChatUI() {
-    document.getElementById('chatWrap').classList.remove('active');
-    document.getElementById('chatThread').innerHTML =
-      '<div class="bubble-bot">Dis-moi ce que tu cherches à améliorer côté vente, ou choisis un exemple ci-dessous.</div>';
-    document.getElementById('suggestions').style.display = '';
-    document.getElementById('composer').classList.remove('active');
-    document.getElementById('freeText').value = '';
-    document.getElementById('summary').style.display = 'none';
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('submitError').style.display = 'none';
-    document.getElementById('resultBtn').style.display = 'none';
+  function currentProfile() {
+    return {
+      website: state.website,
+      headcount_range: state.headcount,
+      market: state.market,
+      tool_preference: state.toolPreference
+    };
   }
 
   document.getElementById('nextBtn').addEventListener('click', () => {
@@ -440,10 +372,7 @@
   });
 
   document.getElementById('backBtn').addEventListener('click', () => {
-    if (currentStep > 0) {
-      currentStep--;
-      showStep(currentStep);
-    }
+    if (currentStep > 0) { currentStep--; showStep(currentStep); }
   });
 
   document.getElementById('chatBackBtn').addEventListener('click', () => {
@@ -455,73 +384,167 @@
 
   showStep(0);
 
-  function addUserBubble(text) {
-    const thread = document.getElementById('chatThread');
+  function showChat() {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('chatWrap').classList.add('active');
+    updateProgress();
+    startChat();
+  }
+
+  function resetChatUI() {
+    document.getElementById('chatWrap').classList.remove('active');
+    thread.innerHTML = '';
+    suggestionsEl.innerHTML = '';
+    composerEl.classList.add('hidden');
+    document.getElementById('freeText').value = '';
+    document.getElementById('finishRow').classList.remove('visible');
+    document.getElementById('chatError').style.display = 'none';
+    document.getElementById('typing').style.display = 'none';
+    history = [];
+    chatStarted = false;
+  }
+
+  // ---------------------------------------------------------------------
+  // Chat, backed by the diagnostic-chat / diagnostic-extract /
+  // diagnostic-recommend Edge Functions.
+  // ---------------------------------------------------------------------
+  const thread = document.getElementById('chatThread');
+  const suggestionsEl = document.getElementById('suggestions');
+  const composerEl = document.getElementById('composer');
+  let history = []; // { role: 'user' | 'assistant', content: string }[]
+  let chatStarted = false;
+  let session = null;
+
+  function botSay(text) {
+    const b = document.createElement('div');
+    b.className = 'bubble-bot';
+    b.textContent = text;
+    thread.appendChild(b);
+  }
+
+  function userSay(text) {
     const b = document.createElement('div');
     b.className = 'bubble-user';
     b.textContent = text;
     thread.appendChild(b);
-    document.getElementById('suggestions').style.display = 'none';
-    document.getElementById('composer').classList.remove('active');
-    showSummary(text);
   }
 
-  document.querySelectorAll('.suggestion:not(.other)').forEach(btn => {
-    btn.addEventListener('click', () => addUserBubble(btn.dataset.text));
-  });
+  function setSuggestions(list) {
+    suggestionsEl.innerHTML = '';
+    list.forEach(s => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'suggestion' + (s.other ? ' other' : '');
+      btn.textContent = s.label;
+      btn.addEventListener('click', () => handleAnswer(s.label, s.other));
+      suggestionsEl.appendChild(btn);
+    });
+  }
 
-  document.getElementById('otherBtn').addEventListener('click', () => {
-    document.getElementById('composer').classList.add('active');
-    document.getElementById('freeText').focus();
-  });
+  function showChatError(message) {
+    const el = document.getElementById('chatError');
+    el.textContent = message;
+    el.style.display = 'block';
+  }
+
+  async function startChat() {
+    if (chatStarted) return;
+    chatStarted = true;
+    document.getElementById('typing').style.display = 'block';
+    try {
+      session = await getSession();
+      const res = await callFunction('diagnostic-chat', { profile: currentProfile(), history: [] }, session);
+      document.getElementById('typing').style.display = 'none';
+      botSay(res.message);
+      history.push({ role: 'assistant', content: res.message });
+      setSuggestions([
+        { label: "Je veux un système pour prospecter, suivre mes deals et les signer" },
+        { label: "Je veux monitorer et améliorer mes processus commerciaux" },
+        { label: "Je pars de zéro, j'ai besoin d'une base pour collaborer et vendre" },
+        { label: "Autre, je préfère décrire mon besoin", other: true }
+      ]);
+    } catch (err) {
+      document.getElementById('typing').style.display = 'none';
+      showChatError("Impossible de démarrer la conversation (" + err.message + ").");
+    }
+  }
+
+  function handleAnswer(text, isOther) {
+    if (isOther) {
+      composerEl.classList.remove('hidden');
+      document.getElementById('freeText').focus();
+      suggestionsEl.innerHTML = '';
+      return;
+    }
+    submitAnswer(text);
+  }
 
   document.getElementById('sendBtn').addEventListener('click', () => {
     const val = document.getElementById('freeText').value.trim();
     if (!val) return;
-    addUserBubble(val);
+    document.getElementById('freeText').value = '';
+    submitAnswer(val);
   });
 
-  const SUPABASE_URL = 'https://wbksebogmyqyjqthwamw.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6India3NlYm9nbXlxeWpxdGh3YW13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1OTU3NjUsImV4cCI6MjEwNDE3MTc2NX0.zsNUwuBAUWpDbssL_Dg2CxCfXPshpa3X_YHHia5n7lc';
+  document.getElementById('freeText').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('sendBtn').click();
+    }
+  });
 
-  async function showSummary(rawInput) {
-    const payload = {
-      website: state.website,
-      description: state.description,
-      headcount_range: state.headcount,
-      market: state.market,
-      function: state.func,
-      raw_input: rawInput
-    };
-
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('submitError').style.display = 'none';
-    document.getElementById('resultBtn').style.display = 'none';
+  async function submitAnswer(text) {
+    userSay(text);
+    history.push({ role: 'user', content: text });
+    suggestionsEl.innerHTML = '';
+    composerEl.classList.add('hidden');
+    document.getElementById('chatError').style.display = 'none';
+    document.getElementById('typing').style.display = 'block';
 
     try {
-      const res = await fetch(SUPABASE_URL + '/functions/v1/diagnostic', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-          'apikey': SUPABASE_ANON_KEY
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erreur inconnue');
-
-      sessionStorage.setItem('stagely_diagnostic_result', JSON.stringify({ input: payload, result: data }));
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('resultBtn').style.display = 'inline-block';
-      document.getElementById('resultBtn').onclick = () => { window.location.href = 'diagnostic.html'; };
+      const res = await callFunction('diagnostic-chat', { profile: currentProfile(), history }, session);
+      document.getElementById('typing').style.display = 'none';
+      botSay(res.message);
+      history.push({ role: 'assistant', content: res.message });
+      composerEl.classList.remove('hidden');
+      document.getElementById('finishRow').classList.add('visible');
     } catch (err) {
-      document.getElementById('loading').style.display = 'none';
-      const errEl = document.getElementById('submitError');
-      errEl.textContent = "Le diagnostic n'a pas pu être généré (" + err.message + "). Réessaie dans un instant.";
-      errEl.style.display = 'block';
+      document.getElementById('typing').style.display = 'none';
+      composerEl.classList.remove('hidden');
+      showChatError("La réponse n'a pas pu être générée (" + err.message + "). Réessaie.");
     }
   }
+
+  document.getElementById('finishBtn').addEventListener('click', async () => {
+    document.getElementById('finishBtn').disabled = true;
+    document.getElementById('finishBtn').textContent = 'Analyse en cours...';
+    composerEl.classList.add('hidden');
+    document.getElementById('chatError').style.display = 'none';
+
+    try {
+      session = await getSession();
+      const extractRes = await callFunction('diagnostic-extract', {
+        profile: currentProfile(),
+        transcript: history
+      }, session);
+
+      const recommendRes = await callFunction('diagnostic-recommend', {
+        diagnosis_id: extractRes.diagnosis_id
+      }, session);
+
+      sessionStorage.setItem('stagely_diagnostic_result', JSON.stringify({
+        profile: currentProfile(),
+        extracted_profile: extractRes.extracted_profile,
+        diagnosis_id: extractRes.diagnosis_id,
+        tiers: recommendRes.tiers
+      }));
+      window.location.href = 'diagnostic.html';
+    } catch (err) {
+      document.getElementById('finishBtn').disabled = false;
+      document.getElementById('finishBtn').textContent = "J'ai fini, construire mon diagnostic";
+      showChatError("Le diagnostic n'a pas pu être généré (" + err.message + "). Réessaie dans un instant.");
+    }
+  });
 </script>
 </body>
 </html>

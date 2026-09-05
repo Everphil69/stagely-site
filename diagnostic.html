@@ -61,13 +61,19 @@
   .context h1{ font-size:30px; font-weight:500; margin:0 0 6px; line-height:1.25; }
   .context p{ color:var(--gray); font-size:15px; max-width:60ch; margin:0 0 26px; line-height:1.55; }
 
-  .stage-row{ display:flex; align-items:flex-end; gap:26px; margin-bottom:6px; }
-  .stage{ flex:1; }
-  .stage .bar{ height:10px; border-radius:2px; background:var(--line); margin-bottom:10px; }
-  .stage.done .bar{ background:var(--teal); }
-  .stage.current .bar{ background:var(--coral); }
-  .stage span{ font-size:13px; color:var(--gray); }
-  .stage.current span{ color:var(--ink); font-weight:600; }
+  .ctx-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .ctx-tag{
+    font-size:12px; padding:4px 10px; border-radius:20px; color:var(--teal-deep);
+    background:var(--teal-tint); font-weight:500;
+  }
+
+  /* ---------- tier tabs ---------- */
+  .tier-tabs{ display:flex; gap:8px; margin-bottom:26px; }
+  .tier-tab{
+    background:#fff; border:1px solid var(--line); color:var(--gray); border-radius:20px;
+    padding:8px 18px; font-size:13.5px; font-weight:500; font-family:'Inter'; cursor:pointer;
+  }
+  .tier-tab.active{ background:var(--teal); border-color:var(--teal); color:var(--ivory); }
 
   /* ---------- recommendation list ---------- */
   .section{ max-width:920px; margin:0 auto; padding:36px 48px; }
@@ -151,12 +157,7 @@
       <div class="label" id="ctxLabel">Diagnostic</div>
       <h1 id="ctxHeadline">Le bon stack pour votre stade, pas le plus gros.</h1>
       <p id="ctxSummary"></p>
-
-      <div class="stage-row" id="stageRow">
-        <div class="stage"><div class="bar"></div><span>Amorçage</span></div>
-        <div class="stage"><div class="bar"></div><span>Early stage</span></div>
-        <div class="stage"><div class="bar"></div><span>Croissance</span></div>
-      </div>
+      <div class="ctx-tags" id="ctxTags"></div>
     </div>
 
     <div class="section">
@@ -167,16 +168,14 @@
         </div>
       </div>
 
-      <div id="rowsWrap"></div>
-    </div>
-
-    <div class="section" style="padding-top:0;">
-      <div class="compat">
-        <div>
-          <h3>Compatibilité entre les outils recommandés</h3>
-          <p id="compatNote"></p>
-        </div>
+      <div class="tier-tabs" id="tierTabs">
+        <button type="button" class="tier-tab" data-tier="min">Minimal</button>
+        <button type="button" class="tier-tab" data-tier="recommended">Recommandé</button>
+        <button type="button" class="tier-tab" data-tier="max">Maximal</button>
       </div>
+
+      <div id="rowsWrap"></div>
+      <p id="emptyTier" style="display:none; color:var(--gray); font-size:14px;">Aucune recommandation pour ce palier.</p>
     </div>
 
     <div class="cta-row">
@@ -185,9 +184,8 @@
   </div>
 
 <script>
-  const STAGE_LABELS = { amorcage: 'Amorçage', early_stage: 'Early stage', croissance: 'Croissance' };
-  const STAGE_ORDER = ['amorcage', 'early_stage', 'croissance'];
   const PRICING_LABELS = { flat: '/mois', per_seat: '/siège', usage_based: '/usage', quote_only: '' };
+  const TIER_LABELS = { min: 'Minimal', recommended: 'Recommandé', max: 'Maximal' };
 
   function escapeHtml(str) {
     const d = document.createElement('div');
@@ -202,25 +200,22 @@
     return 'À partir de ' + product.starting_price_usd + ' $' + (PRICING_LABELS[product.pricing_model] || '');
   }
 
-  function render(stored) {
-    const { input, result } = stored;
+  let tiers = { min: [], recommended: [], max: [] };
+  let activeTier = 'recommended';
 
-    document.getElementById('ctxLabel').textContent = 'Diagnostic' + (input.website ? ' — ' + input.website : '');
-    document.getElementById('ctxHeadline').textContent = result.headline || 'Le bon stack pour votre stade, pas le plus gros.';
-    document.getElementById('ctxSummary').textContent = result.summary || '';
+  function renderTier() {
+    const rowsWrap = document.getElementById('rowsWrap');
+    const emptyTier = document.getElementById('emptyTier');
+    rowsWrap.innerHTML = '';
 
-    const currentIdx = STAGE_ORDER.indexOf(result.stage);
-    const stageEls = document.querySelectorAll('#stageRow .stage');
-    stageEls.forEach((el, i) => {
-      el.classList.remove('done', 'current');
-      if (currentIdx === -1) return;
-      if (i < currentIdx) el.classList.add('done');
-      if (i === currentIdx) el.classList.add('current');
+    document.querySelectorAll('.tier-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tier === activeTier);
     });
 
-    const rowsWrap = document.getElementById('rowsWrap');
-    rowsWrap.innerHTML = '';
-    (result.recommendations || []).forEach(rec => {
+    const items = (tiers[activeTier] || []).slice().sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+    emptyTier.style.display = items.length === 0 ? 'block' : 'none';
+
+    items.forEach(rec => {
       const p = rec.product;
       const row = document.createElement('div');
       row.className = 'row';
@@ -229,15 +224,39 @@
         <div class="tool">
           <h3>${escapeHtml(p.name)}</h3>
           <p>${escapeHtml(rec.reasoning || p.short_description || '')}</p>
-          <div class="tags">${rec.priority === 'must_have' ? '<span class="tag">Essentiel maintenant</span>' : '<span class="tag warn">Peut attendre</span>'}</div>
         </div>
         <div class="price">
           <div class="amount">${escapeHtml(formatPrice(p))}</div>
         </div>`;
       rowsWrap.appendChild(row);
     });
+  }
 
-    document.getElementById('compatNote').textContent = result.compatibility_note || '';
+  document.querySelectorAll('.tier-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTier = btn.dataset.tier;
+      renderTier();
+    });
+  });
+
+  function render(stored) {
+    const { profile, extracted_profile } = stored;
+    tiers = stored.tiers || { min: [], recommended: [], max: [] };
+
+    document.getElementById('ctxLabel').textContent = 'Diagnostic' + (profile && profile.website ? ' — ' + profile.website : '');
+    document.getElementById('ctxHeadline').textContent = 'Le bon stack pour votre stade, pas le plus gros.';
+    document.getElementById('ctxSummary').textContent = (extracted_profile && extracted_profile.need_summary) || '';
+
+    const tagsEl = document.getElementById('ctxTags');
+    tagsEl.innerHTML = '';
+    ((extracted_profile && extracted_profile.categories) || []).forEach(cat => {
+      const span = document.createElement('span');
+      span.className = 'ctx-tag';
+      span.textContent = cat;
+      tagsEl.appendChild(span);
+    });
+
+    renderTier();
   }
 
   const raw = sessionStorage.getItem('stagely_diagnostic_result');

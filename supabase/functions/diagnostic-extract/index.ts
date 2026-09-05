@@ -10,16 +10,16 @@ const CORS_HEADERS = {
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
 const PROMPT_VERSION = "extract-v1";
 
-const SYSTEM_PROMPT = `Tu analyses la transcription d'une conversation de diagnostic logiciel entre un assistant et un fondateur de startup.
+const SYSTEM_PROMPT = `On te fournit, entre balises <transcript>, la transcription d'une conversation de diagnostic logiciel entre un assistant et un fondateur de startup. Ce n'est PAS une conversation a continuer : ton unique tache est de l'analyser et d'en extraire des donnees structurees.
 
-Extrait les informations suivantes et reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, exactement dans ce format :
+Extrait les informations suivantes et reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans balise markdown, exactement dans ce format :
 {
   "need_summary": "resume du besoin logiciel reel en 1-3 phrases, en francais",
   "categories": ["categorie de logiciel en langage courant", "..."],
   "constraints": ["contrainte ou signal important releve dans la conversation (budget, outil existant, delai, volume...), le cas echeant"]
 }
 
-"categories" doit lister les familles de logiciels concernees en langage courant (ex: "CRM", "outil de facturation"), pas des noms de produits precis. "constraints" peut etre un tableau vide si rien de notable n'a ete dit.`;
+"categories" doit lister les familles de logiciels concernees en langage courant (ex: "CRM", "outil de facturation"), pas des noms de produits precis. "constraints" peut etre un tableau vide si rien de notable n'a ete dit. Ne reponds jamais par la suite de la conversation, uniquement par le JSON demande.`;
 
 interface CompanyProfile {
   website?: string;
@@ -49,6 +49,10 @@ function extractJson(text: string): unknown {
 
 function transcriptToText(transcript: ChatTurn[]): string {
   return transcript.map((t) => `${t.role}: ${t.content}`).join("\n\n");
+}
+
+function transcriptToPrompt(transcript: ChatTurn[]): string {
+  return `<transcript>\n${transcriptToText(transcript)}\n</transcript>\n\nRappel : reponds uniquement avec l'objet JSON demande, rien d'autre.`;
 }
 
 Deno.serve(async (req: Request) => {
@@ -107,7 +111,7 @@ Deno.serve(async (req: Request) => {
         model: ANTHROPIC_MODEL,
         max_tokens: 800,
         system: SYSTEM_PROMPT,
-        messages: [{ role: "user", content: transcriptToText(transcript) }],
+        messages: [{ role: "user", content: transcriptToPrompt(transcript) }],
       }),
     });
   } catch (err) {
@@ -121,6 +125,10 @@ Deno.serve(async (req: Request) => {
 
   const anthropicData = await anthropicRes.json();
   const textBlock = anthropicData.content?.find((b: any) => b.type === "text")?.text ?? "";
+
+  if (anthropicData.stop_reason === "max_tokens") {
+    return jsonResponse({ error: "Claude's response was cut off (max_tokens reached)" }, 502);
+  }
 
   let extractedProfile: any;
   try {

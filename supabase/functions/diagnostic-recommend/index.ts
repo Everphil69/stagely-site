@@ -21,7 +21,7 @@ Regles :
 - Chaque palier superieur doit rester coherent avec le precedent (ne pas changer totalement de logique d'un palier a l'autre sans raison).
 - Si le catalogue ne couvre pas correctement un besoin, ne force pas une recommandation bancale : omets ce besoin plutot que de recommander un outil inadapte.
 - Pour chaque outil recommande, donne un rang (ordre d'importance dans le palier, 1 = le plus important) et un score de correspondance entre 0 et 1.
-- Ton des "reasoning" : direct, peer-to-peer fondateur, en francais.
+- Ton des "reasoning" : direct, peer-to-peer fondateur, en francais. Une seule phrase courte, pas plus.
 
 Reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, exactement dans ce format :
 {
@@ -147,7 +147,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
-        max_tokens: 3000,
+        max_tokens: 8000,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: userMessage }],
       }),
@@ -163,6 +163,10 @@ Deno.serve(async (req: Request) => {
 
   const anthropicData = await anthropicRes.json();
   const textBlock = anthropicData.content?.find((b: any) => b.type === "text")?.text ?? "";
+
+  if (anthropicData.stop_reason === "max_tokens") {
+    return jsonResponse({ error: "Claude's response was cut off (max_tokens reached)" }, 502);
+  }
 
   let parsed: Record<Tier, any[]>;
   try {
