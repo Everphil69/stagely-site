@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stagely — Connexion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0F6E56;
+    --teal-deep: #0B5443;
+    --teal-tint: #E7EFEB;
+    --coral: #D85A30;
+    --coral-tint: #F7E7E0;
+    --ivory: #F7F5F1;
+    --ink: #2C2C2A;
+    --muted: #5F5E5A;
+    --line: #E4E0D8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 48px; border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .logo-mark{ display:flex; align-items:flex-end; gap:3px; height:22px; }
+  .logo-mark span{ width:6px; display:block; border-radius:1px; background:var(--teal); }
+  .logo-mark span:nth-child(1){ height:9px; }
+  .logo-mark span:nth-child(2){ height:15px; }
+  .logo-mark span:nth-child(3){ height:22px; background:var(--coral); }
+  .wordmark{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--ink); }
+  nav{ display:flex; align-items:center; gap:30px; }
+  nav a{ color:var(--muted); text-decoration:none; font-size:14px; font-weight:500; padding-bottom:4px; border-bottom:2px solid transparent; }
+  nav a.active{ color:var(--ink); border-bottom-color:var(--coral); }
+
+  .page-wrap { display: flex; justify-content: center; padding: 56px 20px; }
+  .card { width: 100%; max-width: 420px; }
+
+  .account-state {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 24px; font-size: 13.5px; color: var(--muted); line-height: 1.6;
+  }
+  .account-state strong { color: var(--ink); }
+  .account-state .btn-link {
+    background: none; border: none; color: var(--teal-deep); font-weight: 600; font-size: 13.5px;
+    cursor: pointer; padding: 0; text-decoration: underline;
+  }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 24px; background: #EFEAE0; border-radius: 10px; padding: 4px; }
+  .tab-btn {
+    flex: 1; background: none; border: none; padding: 10px; border-radius: 7px;
+    font-family: 'Inter'; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer;
+  }
+  .tab-btn.active { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(44,44,42,.08); }
+
+  .panel-form { display: none; }
+  .panel-form.active { display: block; animation: fade 0.2s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 24px; margin: 0 0 6px; }
+  .sub { color: var(--muted); font-size: 13.5px; margin: 0 0 24px; line-height: 1.55; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { font-size: 13px; font-weight: 500; }
+  .field input {
+    font-family: 'Inter', sans-serif; font-size: 15px; padding: 12px 14px;
+    border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--ink); outline: none;
+  }
+  .field input:focus { border-color: var(--teal); }
+
+  .btn-submit {
+    width: 100%; background: var(--teal); color: #fff; border: none; font-size: 15px; font-weight: 600;
+    padding: 13px 20px; border-radius: 8px; cursor: pointer; margin-top: 6px;
+  }
+  .btn-submit:hover { background: var(--teal-deep); }
+  .btn-submit:disabled { background: var(--line); cursor: not-allowed; }
+
+  .msg { font-size: 13.5px; margin-top: 14px; padding: 12px 14px; border-radius: 8px; display: none; line-height: 1.5; }
+  .msg.show { display: block; }
+  .msg.err { background: var(--coral-tint); color: #9C4A20; }
+  .msg.ok { background: var(--teal-tint); color: var(--teal-deep); }
+
+  @media (max-width: 720px) {
+    .topbar { padding: 18px 22px; }
+    nav a:not(.active) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <div class="logo-mark"><span></span><span></span><span></span></div>
+      <div class="wordmark">stagely</div>
+    </a>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="diagnostic-form.html">Diagnostic</a>
+      <a href="catalogue.html">Catalogue</a>
+      <a href="profile.html">Profil</a>
+      <a href="login.html" class="active">Connexion</a>
+    </nav>
+  </div>
+
+  <div class="page-wrap">
+    <div class="card">
+      <div class="account-state" id="accountState">Vérification de ta session...</div>
+
+      <div id="authForms">
+        <div class="tabs">
+          <button type="button" class="tab-btn active" id="tabLogin">Se connecter</button>
+          <button type="button" class="tab-btn" id="tabSignup">Créer un compte</button>
+        </div>
+
+        <div class="panel-form active" id="panelLogin">
+          <h1>Content de te revoir</h1>
+          <p class="sub">Connecte-toi pour retrouver ton profil et ta stack.</p>
+          <form id="loginForm">
+            <div class="field">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" required autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="login-password">Mot de passe</label>
+              <input type="password" id="login-password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-submit" id="loginBtn">Se connecter</button>
+          </form>
+          <div class="msg" id="loginMsg"></div>
+        </div>
+
+        <div class="panel-form" id="panelSignup">
+          <h1>Créer un compte</h1>
+          <p class="sub" id="signupSub">On lie ce compte à ton profil actuel, pour que tu puisses le retrouver depuis n'importe où.</p>
+          <form id="signupForm">
+            <div class="field">
+              <label for="signup-email">Email</label>
+              <input type="email" id="signup-email" required autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="signup-password">Mot de passe</label>
+              <input type="password" id="signup-password" required minlength="6" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn-submit" id="signupBtn">Créer mon compte</button>
+          </form>
+          <div class="msg" id="signupMsg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const SUPABASE_URL = "https://wbksebogmyqyjqthwamw.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6India3NlYm9nbXlxeWpxdGh3YW13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1OTU3NjUsImV4cCI6MjEwNDE3MTc2NX0.zsNUwuBAUWpDbssL_Dg2CxCfXPshpa3X_YHHia5n7lc";
+  const AUTH_STORAGE_KEY = 'stagely_auth_session';
+
+  function decodeJwt(token) {
+    try {
+      const payload = token.split('.')[1];
+      const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decodeURIComponent(escape(json)));
+    } catch {
+      return null;
+    }
+  }
+
+  function getCachedSession() {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  function storeSession(data) {
+    const session = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      user_id: data.user && data.user.id,
+      expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
+    };
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    return session;
+  }
+
+  async function signInAnonymously() {
+    const res = await fetch(SUPABASE_URL + '/auth/v1/signup', {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.msg || data.error_description || data.error || 'Connexion anonyme impossible');
+    return storeSession(data);
+  }
+
+  async function refreshSession(cached) {
+    const res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: cached.refresh_token })
+    });
+    const data = await res.json();
+    if (!res.ok) return null;
+    if (!data.user) data.user = { id: cached.user_id };
+    return storeSession(data);
+  }
+
+  async function getSession() {
+    const cached = getCachedSession();
+    if (cached) {
+      if (cached.expires_at - 30 > Math.floor(Date.now() / 1000)) return cached;
+      const refreshed = await refreshSession(cached);
+      if (refreshed) return refreshed;
+    }
+    return signInAnonymously();
+  }
+
+  let session = null;
+  let isAnonymous = true;
+
+  function setAccountState(text) {
+    document.getElementById('accountState').innerHTML = text;
+  }
+
+  async function refreshAccountState() {
+    session = await getSession();
+    const claims = decodeJwt(session.access_token) || {};
+    isAnonymous = claims.is_anonymous !== false; // treat unknown as anonymous
+    const email = claims.email;
+
+    if (!isAnonymous && email) {
+      setAccountState(`Connecté en tant que <strong>${email}</strong>. <button type="button" class="btn-link" id="logoutBtn">Se déconnecter</button>`);
+      document.getElementById('authForms').style.display = 'none';
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+    } else {
+      setAccountState(`Tu utilises Stagely sans compte pour l'instant (profil sauvegardé sur cet appareil uniquement). Crée un compte pour le retrouver depuis un autre navigateur.`);
+      document.getElementById('authForms').style.display = '';
+    }
+  }
+
+  async function logout() {
+    try {
+      await fetch(SUPABASE_URL + '/auth/v1/logout', {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + session.access_token }
+      });
+    } catch {}
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    setAccountState('Déconnecté. Rafraîchissement...');
+    setTimeout(() => location.reload(), 400);
+  }
+
+  // ---------------------------------------------------------------------
+  // Tabs
+  // ---------------------------------------------------------------------
+  document.getElementById('tabLogin').addEventListener('click', () => {
+    document.getElementById('tabLogin').classList.add('active');
+    document.getElementById('tabSignup').classList.remove('active');
+    document.getElementById('panelLogin').classList.add('active');
+    document.getElementById('panelSignup').classList.remove('active');
+  });
+  document.getElementById('tabSignup').addEventListener('click', () => {
+    document.getElementById('tabSignup').classList.add('active');
+    document.getElementById('tabLogin').classList.remove('active');
+    document.getElementById('panelSignup').classList.add('active');
+    document.getElementById('panelLogin').classList.remove('active');
+  });
+
+  function showMsg(id, text, kind) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'msg show ' + kind;
+  }
+
+  const ERROR_TRANSLATIONS = [
+    [/invalid login credentials/i, "Email ou mot de passe incorrect."],
+    [/user already registered/i, "Un compte existe déjà avec cet email."],
+    [/password should be at least/i, "Le mot de passe doit faire au moins 6 caractères."],
+    [/unable to validate email address/i, "Adresse email invalide."],
+    [/email rate limit exceeded/i, "Trop de tentatives, réessaie dans quelques minutes."],
+    [/a user with this email address has already been registered/i, "Un compte existe déjà avec cet email."]
+  ];
+
+  function friendlyAuthError(message) {
+    const match = ERROR_TRANSLATIONS.find(([re]) => re.test(message));
+    return match ? match[1] : message;
+  }
+
+  // ---------------------------------------------------------------------
+  // Login
+  // ---------------------------------------------------------------------
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.textContent = 'Connexion...';
+    document.getElementById('loginMsg').className = 'msg';
+    try {
+      const res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('login-email').value.trim(),
+          password: document.getElementById('login-password').value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(friendlyAuthError(data.error_description || data.msg || 'Email ou mot de passe incorrect.'));
+      storeSession(data);
+      window.location.href = 'profile.html';
+    } catch (err) {
+      showMsg('loginMsg', err.message, 'err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Se connecter';
+    }
+  });
+
+  // ---------------------------------------------------------------------
+  // Signup — links the current anonymous identity to an email/password so
+  // the existing company profile carries over, rather than starting fresh.
+  // ---------------------------------------------------------------------
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('signupBtn');
+    btn.disabled = true;
+    btn.textContent = 'Création...';
+    document.getElementById('signupMsg').className = 'msg';
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+
+    try {
+      session = await getSession();
+      const claims = decodeJwt(session.access_token) || {};
+      const anon = claims.is_anonymous !== false;
+
+      let res, data;
+      if (anon) {
+        res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+          method: 'PUT',
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: 'Bearer ' + session.access_token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+      } else {
+        res = await fetch(SUPABASE_URL + '/auth/v1/signup', {
+          method: 'POST',
+          headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+      }
+      data = await res.json();
+      if (!res.ok) throw new Error(friendlyAuthError(data.error_description || data.msg || data.error || 'Impossible de créer le compte.'));
+
+      // PUT /user returns the user object directly; POST /signup returns
+      // {access_token, ..., user} when a session is issued immediately.
+      const user = data.user || data;
+      const confirmed = !!user.email_confirmed_at && !user.new_email;
+
+      if (!confirmed) {
+        showMsg('signupMsg', 'Compte créé : vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi.', 'ok');
+      } else {
+        if (data.access_token) {
+          storeSession(data);
+        } else {
+          // Linking an anonymous session (PUT /user) doesn't issue new tokens —
+          // the cached access token still carries the old is_anonymous claim
+          // until refreshed, so force a refresh to pick up the real account.
+          await refreshSession(session);
+        }
+        showMsg('signupMsg', anon ? 'Compte créé et lié à ton profil.' : 'Compte créé.', 'ok');
+        setTimeout(() => { window.location.href = 'profile.html'; }, 900);
+      }
+    } catch (err) {
+      showMsg('signupMsg', err.message, 'err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Créer mon compte';
+    }
+  });
+
+  refreshAccountState();
+</script>
+</body>
+</html>
