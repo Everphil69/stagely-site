@@ -102,6 +102,7 @@
   .tool-chip .check { font-size: 12px; visibility: hidden; }
   .tool-chip.selected .check { visibility: visible; }
   .tool-chip.pending { opacity: 0.55; pointer-events: none; }
+  .tool-chip img.logo { width: 16px; height: 16px; border-radius: 4px; object-fit: contain; background: #fff; flex-shrink: 0; }
 
   .empty-cat { color: var(--muted); font-size: 13px; }
   .state { color: var(--muted); font-size: 14px; padding: 24px 0; text-align: center; }
@@ -367,12 +368,22 @@
       : 'Aucun outil sélectionné pour le moment.';
   }
 
+  function faviconUrl(websiteUrl) {
+    try {
+      const domain = new URL(websiteUrl).hostname;
+      return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+    } catch {
+      return null;
+    }
+  }
+
   function toolChip(p) {
     const selected = selectedProductIds.has(p.id);
+    const logo = p.website_url ? faviconUrl(p.website_url) : null;
     return `
       <button type="button" class="tool-chip${selected ? ' selected' : ''}" data-product-id="${p.id}"
         data-name="${(p.name || '').toLowerCase()}">
-        <span class="check">✓</span>${p.name}
+        <span class="check">✓</span>${logo ? `<img class="logo" src="${logo}" alt="" loading="lazy" />` : ''}${p.name}
       </button>
     `;
   }
