@@ -59,9 +59,11 @@
     font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
     padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
     background: var(--card-bg); color: var(--ink); cursor: pointer; text-decoration: none;
-    transition: border-color 0.15s ease;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
   }
   .chip:hover { border-color: var(--teal); }
+  .chip.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .chip .count { opacity: 0.65; font-size: 12px; margin-left: 4px; }
 
   .category { margin-bottom: 40px; }
   .category-head { margin-bottom: 16px; }
@@ -100,6 +102,7 @@
       <a href="index.html">Accueil</a>
       <a href="diagnostic-form.html">Diagnostic</a>
       <a href="catalogue.html" class="active">Catalogue</a>
+      <a href="profile.html">Profil</a>
     </nav>
   </div>
 
@@ -192,13 +195,34 @@
         productsByCategory[link.category_id].push(link.software_products);
       });
 
-      chipsEl.innerHTML = categories
-        .map(c => `<a class="chip" href="#cat-${c.slug}">${c.name}</a>`)
-        .join("");
+      const totalCount = categories.reduce((sum, c) => sum + (productsByCategory[c.id]?.length || 0), 0);
+      const categoriesWithProducts = categories.filter(c => (productsByCategory[c.id]?.length || 0) > 0);
 
-      contentEl.innerHTML = categories
+      chipsEl.innerHTML = [
+        `<button type="button" class="chip active" data-slug="all">Tous <span class="count">${totalCount}</span></button>`,
+        ...categoriesWithProducts.map(c =>
+          `<button type="button" class="chip" data-slug="${c.slug}">${c.name} <span class="count">${productsByCategory[c.id].length}</span></button>`
+        )
+      ].join("");
+
+      contentEl.innerHTML = categoriesWithProducts
         .map(cat => categorySection(cat, productsByCategory[cat.id] || []))
         .join("");
+
+      if (!categoriesWithProducts.length) {
+        contentEl.innerHTML = `<p class="state">Aucun logiciel dans le catalogue pour le moment.</p>`;
+      }
+
+      chipsEl.addEventListener("click", (e) => {
+        const btn = e.target.closest(".chip");
+        if (!btn) return;
+        chipsEl.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        const slug = btn.dataset.slug;
+        document.querySelectorAll(".category").forEach(section => {
+          section.style.display = (slug === "all" || section.id === `cat-${slug}`) ? "" : "none";
+        });
+      });
 
       document.getElementById("search").addEventListener("input", (e) => {
         const q = e.target.value.trim().toLowerCase();
