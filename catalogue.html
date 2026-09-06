@@ -54,16 +54,13 @@
     background: #fff; color: var(--ink);
   }
 
-  #chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
-  .chip {
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
-    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
-    background: var(--card-bg); color: var(--ink); cursor: pointer; text-decoration: none;
-    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  #category-filter {
+    width: 100%; max-width: 280px; padding: 10px 14px; margin-bottom: 28px;
+    border: 1px solid var(--line); border-radius: 8px; font-family: 'Inter', sans-serif;
+    font-size: 14px; color: var(--ink); background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="%235F5E5A" stroke-width="1.5" fill="none" fill-rule="evenodd"/></svg>') no-repeat right 14px center;
+    appearance: none; -webkit-appearance: none; cursor: pointer;
   }
-  .chip:hover { border-color: var(--teal); }
-  .chip.active { background: var(--teal); border-color: var(--teal); color: #fff; }
-  .chip .count { opacity: 0.65; font-size: 12px; margin-left: 4px; }
+  #category-filter:hover, #category-filter:focus { border-color: var(--teal); outline: none; }
 
   .category { margin-bottom: 40px; }
   .category-head { margin-bottom: 16px; }
@@ -113,7 +110,7 @@
     </div>
 
     <input id="search" type="text" placeholder="Rechercher un logiciel..." />
-    <div id="chips"></div>
+    <select id="category-filter"></select>
     <div id="content"><p class="state">Chargement du catalogue…</p></div>
   </div>
 
@@ -174,7 +171,7 @@
 
   async function init() {
     const contentEl = document.getElementById("content");
-    const chipsEl = document.getElementById("chips");
+    const filterEl = document.getElementById("category-filter");
 
     try {
       const [categories, links] = await Promise.all([
@@ -198,10 +195,10 @@
       const totalCount = categories.reduce((sum, c) => sum + (productsByCategory[c.id]?.length || 0), 0);
       const categoriesWithProducts = categories.filter(c => (productsByCategory[c.id]?.length || 0) > 0);
 
-      chipsEl.innerHTML = [
-        `<button type="button" class="chip active" data-slug="all">Tous <span class="count">${totalCount}</span></button>`,
+      filterEl.innerHTML = [
+        `<option value="all">Toutes les catégories (${totalCount})</option>`,
         ...categoriesWithProducts.map(c =>
-          `<button type="button" class="chip" data-slug="${c.slug}">${c.name} <span class="count">${productsByCategory[c.id].length}</span></button>`
+          `<option value="${c.slug}">${c.name} (${productsByCategory[c.id].length})</option>`
         )
       ].join("");
 
@@ -213,12 +210,8 @@
         contentEl.innerHTML = `<p class="state">Aucun logiciel dans le catalogue pour le moment.</p>`;
       }
 
-      chipsEl.addEventListener("click", (e) => {
-        const btn = e.target.closest(".chip");
-        if (!btn) return;
-        chipsEl.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-        btn.classList.add("active");
-        const slug = btn.dataset.slug;
+      filterEl.addEventListener("change", () => {
+        const slug = filterEl.value;
         document.querySelectorAll(".category").forEach(section => {
           section.style.display = (slug === "all" || section.id === `cat-${slug}`) ? "" : "none";
         });
