@@ -521,8 +521,12 @@
       document.getElementById('typing').style.display = 'none';
       botSay(res.message);
       history.push({ role: 'assistant', content: res.message });
-      composerEl.classList.remove('hidden');
-      document.getElementById('finishRow').classList.add('visible');
+      if (res.ready) {
+        runDiagnostic();
+      } else {
+        composerEl.classList.remove('hidden');
+        document.getElementById('finishRow').classList.add('visible');
+      }
     } catch (err) {
       document.getElementById('typing').style.display = 'none';
       composerEl.classList.remove('hidden');
@@ -530,10 +534,12 @@
     }
   }
 
-  document.getElementById('finishBtn').addEventListener('click', async () => {
+  async function runDiagnostic() {
     document.getElementById('finishBtn').disabled = true;
     document.getElementById('finishBtn').textContent = 'Analyse en cours...';
+    document.getElementById('finishRow').classList.add('visible');
     composerEl.classList.add('hidden');
+    suggestionsEl.innerHTML = '';
     document.getElementById('chatError').style.display = 'none';
 
     try {
@@ -557,9 +563,12 @@
     } catch (err) {
       document.getElementById('finishBtn').disabled = false;
       document.getElementById('finishBtn').textContent = "J'ai fini, construire mon diagnostic";
+      composerEl.classList.remove('hidden');
       showChatError("Le diagnostic n'a pas pu être généré (" + err.message + "). Réessaie dans un instant.");
     }
-  });
+  }
+
+  document.getElementById('finishBtn').addEventListener('click', runDiagnostic);
 </script>
 </body>
 </html>

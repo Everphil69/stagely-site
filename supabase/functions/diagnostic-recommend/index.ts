@@ -25,24 +25,49 @@ Regles :
 - Pour chaque outil recommande, ajoute un tableau "rejected_alternatives" listant les autres produits du catalogue de la meme categorie (feuille) que tu as consideres mais ecartes a ce palier. Reference-les UNIQUEMENT par leur "product_id" exact du catalogue fourni, jamais un produit hors catalogue. Si aucune alternative pertinente n'existe dans le catalogue pour cette categorie, renvoie un tableau vide plutot que d'en inventer une. Chaque raison doit etre concrete et specifique a ce produit ecarte (jamais une formule generique comme "moins adapte"), en une phrase courte, en francais.
 - Ton des "reasoning" : direct, peer-to-peer fondateur, en francais. Une seule phrase courte, pas plus.
 
-Reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, exactement dans ce format :
-{
-  "min": [ { "product_id": "uuid exact du catalogue", "rank": 1, "match_score": 0.8, "reasoning": "...", "rejected_alternatives": [ { "product_id": "uuid exact d'un autre produit du catalogue", "reason": "..." } ] } ],
-  "recommended": [ ... ],
-  "max": [ ... ]
-}`;
+Construis la recommandation via l'outil "record_stack_tiers".`;
+
+const TIER_ITEM_SCHEMA = {
+  type: "object",
+  properties: {
+    product_id: { type: "string", description: "uuid exact du catalogue" },
+    rank: { type: "integer", description: "ordre d'importance dans le palier, 1 = le plus important" },
+    match_score: { type: "number", description: "score de correspondance entre 0 et 1" },
+    reasoning: { type: "string", description: "une seule phrase courte, en francais" },
+    rejected_alternatives: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          product_id: { type: "string", description: "uuid exact d'un autre produit du catalogue" },
+          reason: { type: "string" },
+        },
+        required: ["product_id", "reason"],
+      },
+    },
+  },
+  required: ["product_id", "rank", "match_score", "reasoning", "rejected_alternatives"],
+};
+
+const RECOMMEND_TOOL = {
+  name: "record_stack_tiers",
+  description: "Enregistre la recommandation de stack sur les 3 paliers min/recommended/max.",
+  input_schema: {
+    type: "object",
+    properties: {
+      min: { type: "array", items: TIER_ITEM_SCHEMA },
+      recommended: { type: "array", items: TIER_ITEM_SCHEMA },
+      max: { type: "array", items: TIER_ITEM_SCHEMA },
+    },
+    required: ["min", "recommended", "max"],
+  },
+};
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
   });
-}
-
-function extractJson(text: string): unknown {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const raw = fenced ? fenced[1] : text;
-  return JSON.parse(raw.trim());
 }
 
 Deno.serve(async (req: Request) => {
@@ -170,6 +195,8 @@ Deno.serve(async (req: Request) => {
         model: ANTHROPIC_MODEL,
         max_tokens: 16000,
         system: SYSTEM_PROMPT,
+        tools: [RECOMMEND_TOOL],
+        tool_choice: { type: "tool", name: RECOMMEND_TOOL.name },
         messages: [{ role: "user", content: userMessage }],
       }),
     });
@@ -183,18 +210,16 @@ Deno.serve(async (req: Request) => {
   }
 
   const anthropicData = await anthropicRes.json();
-  const textBlock = anthropicData.content?.find((b: any) => b.type === "text")?.text ?? "";
 
   if (anthropicData.stop_reason === "max_tokens") {
     return jsonResponse({ error: "Claude's response was cut off (max_tokens reached)" }, 502);
   }
 
-  let parsed: Record<Tier, any[]>;
-  try {
-    parsed = extractJson(textBlock) as Record<Tier, any[]>;
-  } catch {
-    return jsonResponse({ error: "Could not parse Claude's response", raw: textBlock }, 502);
+  const toolBlock = anthropicData.content?.find((b: any) => b.type === "tool_use");
+  if (!toolBlock?.input) {
+    return jsonResponse({ error: "Claude did not return structured data", raw: anthropicData }, 502);
   }
+  const parsed = toolBlock.input as Record<Tier, any[]>;
 
   const rowsToInsert: any[] = [];
   const responseByTier: Record<Tier, any[]> = { min: [], recommended: [], max: [] };

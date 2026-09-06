@@ -10,16 +10,34 @@ const CORS_HEADERS = {
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
 const PROMPT_VERSION = "extract-v1";
 
-const SYSTEM_PROMPT = `On te fournit, entre balises <transcript>, la transcription d'une conversation de diagnostic logiciel entre un assistant et un fondateur de startup. Ce n'est PAS une conversation a continuer : ton unique tache est de l'analyser et d'en extraire des donnees structurees.
+const SYSTEM_PROMPT = `On te fournit, entre balises <transcript>, la transcription d'une conversation de diagnostic logiciel entre un assistant et un fondateur de startup. Ce n'est PAS une conversation a continuer : ton unique tache est de l'analyser et d'en extraire des donnees structurees via l'outil "record_diagnosis".
 
-Extrait les informations suivantes et reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans balise markdown, exactement dans ce format :
-{
-  "need_summary": "resume du besoin logiciel reel en 1-3 phrases, en francais",
-  "categories": ["categorie de logiciel en langage courant", "..."],
-  "constraints": ["contrainte ou signal important releve dans la conversation (budget, outil existant, delai, volume...), le cas echeant"]
-}
+"categories" doit lister les familles de logiciels concernees en langage courant (ex: "CRM", "outil de facturation"), pas des noms de produits precis. "constraints" peut etre un tableau vide si rien de notable n'a ete dit.`;
 
-"categories" doit lister les familles de logiciels concernees en langage courant (ex: "CRM", "outil de facturation"), pas des noms de produits precis. "constraints" peut etre un tableau vide si rien de notable n'a ete dit. Ne reponds jamais par la suite de la conversation, uniquement par le JSON demande.`;
+const EXTRACT_TOOL = {
+  name: "record_diagnosis",
+  description: "Enregistre le besoin logiciel structure extrait de la transcription.",
+  input_schema: {
+    type: "object",
+    properties: {
+      need_summary: {
+        type: "string",
+        description: "Resume du besoin logiciel reel en 1-3 phrases, en francais",
+      },
+      categories: {
+        type: "array",
+        items: { type: "string" },
+        description: "Familles de logiciels concernees, en langage courant (ex: 'CRM')",
+      },
+      constraints: {
+        type: "array",
+        items: { type: "string" },
+        description: "Contraintes ou signaux importants (budget, outil existant, delai, volume...)",
+      },
+    },
+    required: ["need_summary", "categories", "constraints"],
+  },
+};
 
 interface CompanyProfile {
   website?: string;
@@ -39,12 +57,6 @@ function jsonResponse(body: unknown, status = 200) {
     status,
     headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
   });
-}
-
-function extractJson(text: string): unknown {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const raw = fenced ? fenced[1] : text;
-  return JSON.parse(raw.trim());
 }
 
 function transcriptToText(transcript: ChatTurn[]): string {
@@ -111,6 +123,8 @@ Deno.serve(async (req: Request) => {
         model: ANTHROPIC_MODEL,
         max_tokens: 1500,
         system: SYSTEM_PROMPT,
+        tools: [EXTRACT_TOOL],
+        tool_choice: { type: "tool", name: EXTRACT_TOOL.name },
         messages: [{ role: "user", content: transcriptToPrompt(transcript) }],
       }),
     });
@@ -124,18 +138,16 @@ Deno.serve(async (req: Request) => {
   }
 
   const anthropicData = await anthropicRes.json();
-  const textBlock = anthropicData.content?.find((b: any) => b.type === "text")?.text ?? "";
 
   if (anthropicData.stop_reason === "max_tokens") {
     return jsonResponse({ error: "Claude's response was cut off (max_tokens reached)" }, 502);
   }
 
-  let extractedProfile: any;
-  try {
-    extractedProfile = extractJson(textBlock);
-  } catch {
-    return jsonResponse({ error: "Could not parse Claude's response", raw: textBlock }, 502);
+  const toolBlock = anthropicData.content?.find((b: any) => b.type === "tool_use");
+  if (!toolBlock?.input) {
+    return jsonResponse({ error: "Claude did not return structured data", raw: anthropicData }, 502);
   }
+  const extractedProfile: any = toolBlock.input;
 
   let companyId = body.company_id;
 

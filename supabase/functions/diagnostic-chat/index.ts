@@ -7,6 +7,7 @@ const CORS_HEADERS = {
 };
 
 const ANTHROPIC_MODEL = "claude-sonnet-5";
+const READY_MARKER = "[[DIAGNOSTIC_READY]]";
 
 const SYSTEM_PROMPT = `Tu es un conseiller logiciel expert, dans le style d'un cofondateur GTM/RevOps expérimenté qui a déjà équipé plusieurs startups — pas un vendeur, pas un formulaire déguisé en chat.
 
@@ -22,7 +23,8 @@ Règles :
 
 Le profil de l'entreprise (site, effectif, B2B/B2C, préférence outil unique vs spécialisés) t'est fourni en contexte, ne repose pas ces questions.
 
-Quand tu juges avoir assez d'information, termine par une phrase de clôture naturelle (pas de format fixe), sans lister toi-même le besoin retenu.`;
+Quand tu juges avoir assez d'information, termine par une phrase de clôture naturelle (pas de format fixe), sans lister toi-même le besoin retenu. Dans ce cas uniquement, ajoute tout de suite après, sur une nouvelle ligne, exactement ce marqueur et rien d'autre après lui : ${READY_MARKER}
+N'ajoute jamais ce marqueur si tu poses encore une question ou si tu attends une réponse de la personne.`;
 
 interface CompanyProfile {
   website?: string;
@@ -103,11 +105,14 @@ Deno.serve(async (req: Request) => {
   }
 
   const data = await anthropicRes.json();
-  const message = data.content?.find((b: any) => b.type === "text")?.text ?? "";
+  const rawMessage = data.content?.find((b: any) => b.type === "text")?.text ?? "";
 
-  if (!message) {
+  if (!rawMessage) {
     return jsonResponse({ error: "Claude returned an empty response" }, 502);
   }
 
-  return jsonResponse({ message });
+  const ready = rawMessage.includes(READY_MARKER);
+  const message = ready ? rawMessage.split(READY_MARKER)[0].trim() : rawMessage;
+
+  return jsonResponse({ message, ready });
 });
