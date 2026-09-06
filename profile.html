@@ -295,12 +295,11 @@
       headers: authHeaders(Object.assign({ 'Content-Type': 'application/json' }, extraHeaders)),
       body: body != null ? JSON.stringify(body) : undefined
     });
+    const text = await res.text();
     if (!res.ok) {
-      const text = await res.text();
       throw new Error(`${res.status} ${text}`);
     }
-    if (res.status === 204) return null;
-    return res.json();
+    return text ? JSON.parse(text) : null;
   }
 
   // ---------------------------------------------------------------------
