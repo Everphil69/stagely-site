@@ -17,15 +17,17 @@ Construis une recommandation de stack sur 3 paliers : "min" (le strict necessair
 
 Regles :
 - Utilise UNIQUEMENT des produits presents dans le catalogue fourni, en reference par leur "id" exact. N'invente jamais un produit absent du catalogue.
+- Le catalogue est deja restreint aux categories feuilles (les categories parentes, sans produit direct, ne sont jamais utilisees comme reference).
 - Un palier peut consolider plusieurs categories de besoin sur un seul outil s'il les couvre reellement (consolidation), ou empiler plusieurs outils sur une meme categorie si c'est justifie (empilement) — uniquement si le catalogue le permet.
 - Chaque palier superieur doit rester coherent avec le precedent (ne pas changer totalement de logique d'un palier a l'autre sans raison).
 - Si le catalogue ne couvre pas correctement un besoin, ne force pas une recommandation bancale : omets ce besoin plutot que de recommander un outil inadapte.
 - Pour chaque outil recommande, donne un rang (ordre d'importance dans le palier, 1 = le plus important) et un score de correspondance entre 0 et 1.
+- Pour chaque outil recommande, ajoute un tableau "rejected_alternatives" listant les autres produits du catalogue de la meme categorie (feuille) que tu as consideres mais ecartes a ce palier. Reference-les UNIQUEMENT par leur "product_id" exact du catalogue fourni, jamais un produit hors catalogue. Si aucune alternative pertinente n'existe dans le catalogue pour cette categorie, renvoie un tableau vide plutot que d'en inventer une. Chaque raison doit etre concrete et specifique a ce produit ecarte (jamais une formule generique comme "moins adapte"), en une phrase courte, en francais.
 - Ton des "reasoning" : direct, peer-to-peer fondateur, en francais. Une seule phrase courte, pas plus.
 
 Reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, exactement dans ce format :
 {
-  "min": [ { "product_id": "uuid exact du catalogue", "rank": 1, "match_score": 0.8, "reasoning": "..." } ],
+  "min": [ { "product_id": "uuid exact du catalogue", "rank": 1, "match_score": 0.8, "reasoning": "...", "rejected_alternatives": [ { "product_id": "uuid exact d'un autre produit du catalogue", "reason": "..." } ] } ],
   "recommended": [ ... ],
   "max": [ ... ]
 }`;
@@ -100,12 +102,29 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: "This diagnosis has no extracted_profile yet" }, 400);
   }
 
+  // Categories with children are parents used purely for grouping in the UI;
+  // they never carry direct product links. Any category-scoped query must
+  // resolve down to leaf categories (no children) or it will look "empty"
+  // even when its children have plenty of verified products.
+  const { data: categoryRows, error: categoriesErr } = await supabase
+    .from("software_categories")
+    .select("id, parent_category_id");
+  if (categoriesErr) {
+    return jsonResponse({ error: `Database error: ${categoriesErr.message}` }, 500);
+  }
+  const parentIds = new Set(
+    (categoryRows ?? []).map((c) => c.parent_category_id).filter(Boolean),
+  );
+  const leafCategoryIds = new Set(
+    (categoryRows ?? []).filter((c) => !parentIds.has(c.id)).map((c) => c.id),
+  );
+
   const { data: rows, error: catalogueErr } = await supabase
     .from("software_products")
     .select(`
       id, name, short_description, pricing_model, starting_price_usd,
       min_company_size, max_company_size, target_market, website_url,
-      software_product_categories ( is_primary, software_categories ( name ) )
+      software_product_categories ( is_primary, category_id, software_categories ( name ) )
     `);
 
   if (catalogueErr) {
@@ -113,8 +132,10 @@ Deno.serve(async (req: Request) => {
   }
 
   const catalogue = (rows ?? []).map((p: any) => {
-    const primaryLink = (p.software_product_categories ?? []).find((l: any) => l.is_primary) ??
-      (p.software_product_categories ?? [])[0];
+    const leafLinks = (p.software_product_categories ?? []).filter((l: any) =>
+      leafCategoryIds.has(l.category_id)
+    );
+    const primaryLink = leafLinks.find((l: any) => l.is_primary) ?? leafLinks[0];
     return {
       id: p.id,
       name: p.name,
@@ -182,6 +203,19 @@ Deno.serve(async (req: Request) => {
     for (const item of parsed[tier] ?? []) {
       const product = catalogueById.get(item.product_id);
       if (!product) continue; // drop anything not in the real catalogue
+
+      // Only keep alternatives that are real catalogue products, distinct
+      // from the recommended product itself. Names always come from the
+      // catalogue, never from whatever Claude echoed back, so a rewritten
+      // reason can never carry an invented product name.
+      const rejectedAlternatives = (Array.isArray(item.rejected_alternatives) ? item.rejected_alternatives : [])
+        .map((alt: any) => {
+          const altProduct = catalogueById.get(alt?.product_id);
+          if (!altProduct || altProduct.id === product.id || !alt.reason) return null;
+          return { product_id: altProduct.id, name: altProduct.name, reason: String(alt.reason) };
+        })
+        .filter((alt: any): alt is { product_id: string; name: string; reason: string } => alt !== null);
+
       rowsToInsert.push({
         diagnosis_id: body.diagnosis_id,
         product_id: item.product_id,
@@ -190,12 +224,14 @@ Deno.serve(async (req: Request) => {
         reasoning: item.reasoning ?? null,
         tier,
         status: "suggested",
+        rejected_alternatives: rejectedAlternatives,
       });
       responseByTier[tier].push({
         product,
         rank: item.rank ?? 1,
         match_score: item.match_score ?? null,
         reasoning: item.reasoning ?? null,
+        rejected_alternatives: rejectedAlternatives,
       });
     }
   }
