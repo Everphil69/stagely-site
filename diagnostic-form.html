@@ -273,17 +273,30 @@
     return signInAnonymously();
   }
 
-  async function callFunction(name, payload, session) {
+  async function callFunction(name, payload, session, timeoutMs) {
     const headers = {
       'Content-Type': 'application/json',
       'apikey': SUPABASE_ANON_KEY,
       'Authorization': 'Bearer ' + (session ? session.access_token : SUPABASE_ANON_KEY)
     };
-    const res = await fetch(SUPABASE_URL + '/functions/v1/' + name, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(payload)
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs || 45000);
+    let res;
+    try {
+      res = await fetch(SUPABASE_URL + '/functions/v1/' + name, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        throw new Error("Le serveur met trop de temps à répondre, réessaie.");
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Erreur inconnue (' + name + ')');
     return data;
@@ -532,7 +545,7 @@
 
       const recommendRes = await callFunction('diagnostic-recommend', {
         diagnosis_id: extractRes.diagnosis_id
-      }, session);
+      }, session, 90000);
 
       sessionStorage.setItem('stagely_diagnostic_result', JSON.stringify({
         profile: currentProfile(),
