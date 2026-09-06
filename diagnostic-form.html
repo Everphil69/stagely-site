@@ -136,6 +136,7 @@
     <a href="index.html">Accueil</a>
     <a href="diagnostic-form.html" class="active">Diagnostic</a>
     <a href="catalogue.html">Catalogue</a>
+    <a href="profile.html">Profil</a>
   </nav>
 </div>
 
@@ -239,7 +240,7 @@
       refresh_token: data.refresh_token,
       expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
     };
-    sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
     return session;
   }
 
@@ -256,12 +257,12 @@
       refresh_token: data.refresh_token,
       expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
     };
-    sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
     return session;
   }
 
   async function getSession() {
-    const raw = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
     if (raw) {
       const cached = JSON.parse(raw);
       if (cached.expires_at - 30 > Math.floor(Date.now() / 1000)) return cached;

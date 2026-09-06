@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stagely — Profil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0F6E56;
+    --teal-deep: #0B5443;
+    --teal-tint: #E7EFEB;
+    --coral: #D85A30;
+    --coral-tint: #F7E7E0;
+    --ivory: #F7F5F1;
+    --ink: #2C2C2A;
+    --muted: #5F5E5A;
+    --line: #E4E0D8;
+    --card-bg: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ivory);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 48px; border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .logo-mark{ display:flex; align-items:flex-end; gap:3px; height:22px; }
+  .logo-mark span{ width:6px; display:block; border-radius:1px; background:var(--teal); }
+  .logo-mark span:nth-child(1){ height:9px; }
+  .logo-mark span:nth-child(2){ height:15px; }
+  .logo-mark span:nth-child(3){ height:22px; background:var(--coral); }
+  .wordmark{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--ink); }
+  nav{ display:flex; align-items:center; gap:30px; }
+  nav a{ color:var(--muted); text-decoration:none; font-size:14px; font-weight:500; padding-bottom:4px; border-bottom:2px solid transparent; }
+  nav a.active{ color:var(--ink); border-bottom-color:var(--coral); }
+
+  .shell { max-width: 880px; margin: 0 auto; padding: 36px 48px 80px; }
+  .page-head { margin-bottom: 28px; }
+  .page-head h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; }
+  .page-head p { color: var(--muted); font-size: 14px; margin: 0; }
+
+  .panel {
+    background: var(--card-bg); border: 1px solid var(--line); border-radius: 12px;
+    padding: 28px; margin-bottom: 24px;
+  }
+  .panel h2 { font-size: 17px; font-weight: 600; margin: 0 0 4px; font-family: 'Inter'; }
+  .panel .sub { font-size: 13px; color: var(--muted); margin: 0 0 20px; }
+
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .field input, .field select, .field textarea {
+    font-family: 'Inter', sans-serif; font-size: 14px; padding: 10px 12px;
+    border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--ink); outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); }
+  .field textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+
+  .save-row { display: flex; align-items: center; gap: 14px; margin-top: 20px; }
+  .btn-save {
+    background: var(--teal); color: #fff; border: none; font-size: 14px; font-weight: 600;
+    padding: 11px 22px; border-radius: 8px; cursor: pointer;
+  }
+  .btn-save:hover { background: var(--teal-deep); }
+  .btn-save:disabled { background: var(--line); cursor: not-allowed; }
+  .save-status { font-size: 13px; color: var(--muted); }
+  .save-status.ok { color: var(--teal-deep); }
+  .save-status.err { color: var(--coral); }
+
+  #search { width: 100%; max-width: 360px; padding: 10px 14px; margin-bottom: 18px;
+    border: 1px solid var(--line); border-radius: 8px; font-family: 'Inter'; font-size: 14px;
+    background: #fff; color: var(--ink); }
+
+  .stack-category { margin-bottom: 26px; }
+  .stack-category:last-child { margin-bottom: 0; }
+  .stack-category-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+  .stack-category-head h3 { font-size: 14.5px; font-weight: 600; margin: 0; font-family: 'Inter'; }
+  .stack-category-head .count { font-size: 12px; color: var(--muted); }
+
+  .tool-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool-chip {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 500;
+    padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line);
+    background: #fff; color: var(--ink); cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .tool-chip:hover { border-color: var(--teal); }
+  .tool-chip.selected { border-color: var(--teal); background: var(--teal); color: #fff; }
+  .tool-chip .check { font-size: 12px; visibility: hidden; }
+  .tool-chip.selected .check { visibility: visible; }
+  .tool-chip.pending { opacity: 0.55; pointer-events: none; }
+
+  .empty-cat { color: var(--muted); font-size: 13px; }
+  .state { color: var(--muted); font-size: 14px; padding: 24px 0; text-align: center; }
+
+  .selected-summary { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .selected-summary strong { color: var(--ink); }
+
+  @media (max-width: 720px) {
+    .topbar, .shell { padding-left: 22px; padding-right: 22px; }
+    nav a:not(.active) { display: none; }
+    .field-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <div class="logo-mark"><span></span><span></span><span></span></div>
+      <div class="wordmark">stagely</div>
+    </a>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="diagnostic-form.html">Diagnostic</a>
+      <a href="catalogue.html">Catalogue</a>
+      <a href="profile.html" class="active">Profil</a>
+    </nav>
+  </div>
+
+  <div class="shell">
+    <div class="page-head">
+      <h1>Profil entreprise</h1>
+      <p>Ces informations servent au diagnostic, au benchmark de prix et à la vérification de compatibilité.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Ton entreprise</h2>
+      <p class="sub">Taille, secteur et stade, pour calibrer les recommandations.</p>
+      <form id="companyForm">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="f-name">Nom de l'entreprise</label>
+            <input type="text" id="f-name" placeholder="Ex : Northwind Analytics">
+          </div>
+          <div class="field">
+            <label for="f-industry">Secteur</label>
+            <input type="text" id="f-industry" placeholder="Ex : SaaS B2B, e-commerce...">
+          </div>
+          <div class="field">
+            <label for="f-headcount">Taille de l'équipe</label>
+            <select id="f-headcount">
+              <option value="">Sélectionner...</option>
+              <option>1 à 10</option>
+              <option>11 à 50</option>
+              <option>51 à 200</option>
+              <option>201 à 500</option>
+              <option>Plus de 500</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-stage">Stade</label>
+            <select id="f-stage">
+              <option value="">Sélectionner...</option>
+              <option>Pré-seed</option>
+              <option>Seed</option>
+              <option>Série A</option>
+              <option>Série B et plus</option>
+              <option>Bootstrapped / rentable</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="f-description">Description rapide</label>
+            <textarea id="f-description" placeholder="Ce que fait l'entreprise, en une ou deux phrases."></textarea>
+          </div>
+        </div>
+        <div class="save-row">
+          <button type="submit" class="btn-save" id="saveBtn">Enregistrer</button>
+          <span class="save-status" id="saveStatus"></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Stack existante</h2>
+      <p class="sub">Sélectionne les outils que vous utilisez déjà, classés par catégorie. Utilisé pour le diagnostic et la compatibilité.</p>
+      <p class="selected-summary" id="selectedSummary"></p>
+      <input id="search" type="text" placeholder="Chercher un outil..." />
+      <div id="stackContent"><p class="state">Chargement de la stack…</p></div>
+    </div>
+  </div>
+
+<script>
+  const SUPABASE_URL = "https://wbksebogmyqyjqthwamw.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6India3NlYm9nbXlxeWpxdGh3YW13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1OTU3NjUsImV4cCI6MjEwNDE3MTc2NX0.zsNUwuBAUWpDbssL_Dg2CxCfXPshpa3X_YHHia5n7lc";
+  const AUTH_STORAGE_KEY = 'stagely_auth_session';
+
+  // ---------------------------------------------------------------------
+  // Anonymous auth, shared with diagnostic-form.html via the same
+  // localStorage key so a saved profile stays tied to the same identity
+  // across visits and across pages.
+  // ---------------------------------------------------------------------
+  async function signInAnonymously() {
+    const res = await fetch(SUPABASE_URL + '/auth/v1/signup', {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.msg || data.error_description || data.error || 'Connexion anonyme impossible');
+    const session = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      user_id: data.user && data.user.id,
+      expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
+    };
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    return session;
+  }
+
+  async function refreshSession(cached) {
+    const res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: cached.refresh_token })
+    });
+    const data = await res.json();
+    if (!res.ok) return null;
+    const session = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      user_id: (data.user && data.user.id) || cached.user_id,
+      expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600)
+    };
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    return session;
+  }
+
+  async function getSession() {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (raw) {
+      const cached = JSON.parse(raw);
+      if (cached.expires_at - 30 > Math.floor(Date.now() / 1000)) return cached;
+      const refreshed = await refreshSession(cached);
+      if (refreshed) return refreshed;
+    }
+    return signInAnonymously();
+  }
+
+  let session = null;
+
+  function authHeaders(extra) {
+    return Object.assign({
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: 'Bearer ' + session.access_token
+    }, extra || {});
+  }
+
+  async function sbGet(path) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: authHeaders() });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    return res.json();
+  }
+
+  async function sbWrite(path, method, body, extraHeaders) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      method,
+      headers: authHeaders(Object.assign({ 'Content-Type': 'application/json' }, extraHeaders)),
+      body: body != null ? JSON.stringify(body) : undefined
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`${res.status} ${text}`);
+    }
+    if (res.status === 204) return null;
+    return res.json();
+  }
+
+  // ---------------------------------------------------------------------
+  // Company profile: one row per user, created lazily so stack picks work
+  // immediately even before the founder saves the form.
+  // ---------------------------------------------------------------------
+  let company = null;
+
+  async function loadOrCreateCompany() {
+    const existing = await sbGet('companies?select=*&order=created_at.desc&limit=1');
+    if (existing.length) return existing[0];
+    const created = await sbWrite('companies', 'POST', { user_id: session.user_id, description: '' }, { Prefer: 'return=representation' });
+    return created[0];
+  }
+
+  function fillCompanyForm(c) {
+    document.getElementById('f-name').value = c.name || '';
+    document.getElementById('f-industry').value = c.industry || '';
+    document.getElementById('f-headcount').value = c.headcount_range || '';
+    document.getElementById('f-stage').value = c.stage || '';
+    document.getElementById('f-description').value = c.description || '';
+  }
+
+  function setSaveStatus(text, kind) {
+    const el = document.getElementById('saveStatus');
+    el.textContent = text;
+    el.className = 'save-status' + (kind ? ' ' + kind : '');
+  }
+
+  document.getElementById('companyForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.disabled = true;
+    setSaveStatus('Enregistrement...');
+    try {
+      const payload = {
+        name: document.getElementById('f-name').value.trim() || null,
+        industry: document.getElementById('f-industry').value.trim() || null,
+        headcount_range: document.getElementById('f-headcount').value || null,
+        stage: document.getElementById('f-stage').value || null,
+        description: document.getElementById('f-description').value.trim()
+      };
+      const updated = await sbWrite(`companies?id=eq.${company.id}`, 'PATCH', payload, { Prefer: 'return=representation' });
+      company = updated[0];
+      setSaveStatus('Profil enregistré.', 'ok');
+    } catch (err) {
+      setSaveStatus(`Erreur : ${err.message}`, 'err');
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+
+  // ---------------------------------------------------------------------
+  // Stack picker: categories + products from the catalogue, toggled
+  // against company_tools for the current company.
+  // ---------------------------------------------------------------------
+  let selectedProductIds = new Set();
+  let categories = [];
+  let productsByCategory = {};
+
+  function updateSelectedSummary() {
+    const el = document.getElementById('selectedSummary');
+    el.innerHTML = selectedProductIds.size
+      ? `<strong>${selectedProductIds.size}</strong> outil${selectedProductIds.size > 1 ? 's' : ''} sélectionné${selectedProductIds.size > 1 ? 's' : ''}.`
+      : 'Aucun outil sélectionné pour le moment.';
+  }
+
+  function toolChip(p) {
+    const selected = selectedProductIds.has(p.id);
+    return `
+      <button type="button" class="tool-chip${selected ? ' selected' : ''}" data-product-id="${p.id}"
+        data-name="${(p.name || '').toLowerCase()}">
+        <span class="check">✓</span>${p.name}
+      </button>
+    `;
+  }
+
+  function renderStack(filterText) {
+    const q = (filterText || '').trim().toLowerCase();
+    const contentEl = document.getElementById('stackContent');
+
+    contentEl.innerHTML = categories.map(cat => {
+      const products = (productsByCategory[cat.id] || []).filter(p =>
+        !q || p.name.toLowerCase().includes(q)
+      );
+      if (!products.length) return '';
+      return `
+        <div class="stack-category">
+          <div class="stack-category-head">
+            <h3>${cat.name}</h3>
+          </div>
+          <div class="tool-grid">${products.map(toolChip).join('')}</div>
+        </div>
+      `;
+    }).join('') || `<p class="state">Aucun outil ne correspond à ta recherche.</p>`;
+
+    contentEl.querySelectorAll('.tool-chip').forEach(chip => {
+      chip.addEventListener('click', () => toggleTool(chip));
+    });
+  }
+
+  async function toggleTool(chip) {
+    const productId = chip.dataset.productId;
+    const wasSelected = selectedProductIds.has(productId);
+    chip.classList.add('pending');
+    try {
+      if (wasSelected) {
+        await sbWrite(`company_tools?company_id=eq.${company.id}&product_id=eq.${productId}`, 'DELETE');
+        selectedProductIds.delete(productId);
+      } else {
+        await sbWrite('company_tools', 'POST', {
+          company_id: company.id,
+          product_id: productId,
+          status: 'active'
+        }, { Prefer: 'return=minimal' });
+        selectedProductIds.add(productId);
+      }
+      chip.classList.toggle('selected', !wasSelected);
+      updateSelectedSummary();
+    } catch (err) {
+      setSaveStatus(`Erreur sur la stack : ${err.message}`, 'err');
+    } finally {
+      chip.classList.remove('pending');
+    }
+  }
+
+  async function loadStack() {
+    const contentEl = document.getElementById('stackContent');
+    try {
+      const [cats, links, companyTools] = await Promise.all([
+        sbGet('software_categories?select=*&order=name.asc'),
+        sbGet('software_product_categories?select=category_id,software_products(*)'),
+        sbGet(`company_tools?select=product_id&company_id=eq.${company.id}`)
+      ]);
+
+      categories = cats;
+      productsByCategory = {};
+      links.forEach(link => {
+        if (!link.software_products) return;
+        if (!productsByCategory[link.category_id]) productsByCategory[link.category_id] = [];
+        productsByCategory[link.category_id].push(link.software_products);
+      });
+
+      selectedProductIds = new Set(companyTools.map(t => t.product_id));
+      updateSelectedSummary();
+      renderStack('');
+
+      document.getElementById('search').addEventListener('input', (e) => renderStack(e.target.value));
+    } catch (err) {
+      contentEl.innerHTML = `<p class="state">Impossible de charger la stack (${err.message}).</p>`;
+    }
+  }
+
+  async function init() {
+    try {
+      session = await getSession();
+      company = await loadOrCreateCompany();
+      fillCompanyForm(company);
+      await loadStack();
+    } catch (err) {
+      document.getElementById('stackContent').innerHTML = `<p class="state">Impossible de charger le profil (${err.message}).</p>`;
+      setSaveStatus(`Erreur : ${err.message}`, 'err');
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>
