@@ -72,6 +72,8 @@
     background: var(--card-bg); border: 1px solid var(--line); border-radius: 10px;
     padding: 16px; display: flex; flex-direction: column; gap: 8px;
   }
+  .card-header { display: flex; align-items: center; gap: 10px; }
+  .card-header img.logo { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; background: #fff; border: 1px solid var(--line); flex-shrink: 0; }
   .card h3 { font-size: 15px; font-weight: 600; margin: 0; font-family: 'Inter'; }
   .card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
   .card .meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); margin-top: auto; padding-top: 8px; border-top: 1px solid var(--line); }
@@ -100,6 +102,7 @@
       <a href="diagnostic-form.html">Diagnostic</a>
       <a href="catalogue.html" class="active">Catalogue</a>
       <a href="profile.html">Profil</a>
+      <a href="login.html">Connexion</a>
     </nav>
   </div>
 
@@ -136,11 +139,24 @@
     return `${p.starting_price_usd} $${unit}`;
   }
 
+  function faviconUrl(websiteUrl) {
+    try {
+      const domain = new URL(websiteUrl).hostname;
+      return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+    } catch {
+      return null;
+    }
+  }
+
   function productCard(p) {
     const verified = p.verified_at ? new Date(p.verified_at).toLocaleDateString("fr-FR") : null;
+    const logo = p.website_url ? faviconUrl(p.website_url) : null;
     return `
       <div class="card" data-name="${(p.name || "").toLowerCase()}" data-desc="${(p.short_description || "").toLowerCase()}">
-        <h3>${p.name}</h3>
+        <div class="card-header">
+          ${logo ? `<img class="logo" src="${logo}" alt="" loading="lazy" />` : ""}
+          <h3>${p.name}</h3>
+        </div>
         <p>${p.short_description || ""}</p>
         <div class="meta">
           <span class="price">${priceLabel(p)}</span>
